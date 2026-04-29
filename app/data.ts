@@ -35,6 +35,64 @@ export const skills = [
   { label: "Apps Script", category: "cloud" },
 ];
 
+export const projects = [
+  {
+    id: "waste-wise",
+    title: "Waste Wise Web",
+    url: "https://waste-wise-free.onrender.com",
+    description:
+      "College project donated to CEMO Marikina. A waste management web platform built for real-world civic use.",
+    role: "Mainly contributed as frontend and devops of the project.",
+    tags: ["Frontend", "DevOps", "Full Stack"],
+    color: "#5a8a6a",
+    featured: true,
+  },
+  {
+    id: "lccad",
+    title: "LCCAD Holdings Website",
+    url: "https://lccadholdings.com",
+    description:
+      "Official website for LCCAD Holdings — a corporate web presence built for a professional audience.",
+    role: "Mainly contributed as frontend of the project.",
+    tags: ["Frontend"],
+    color: "#5a6a8a",
+    featured: false,
+  },
+  {
+    id: "3b-website",
+    title: "3B Technologies Website",
+    url: "https://threebtechincwebsite.onrender.com",
+    description:
+      "Official company website for 3B Technologies Solutions Incorporated — showcasing their services and identity.",
+    role: "Mainly contributed as frontend of the project.",
+    tags: ["Frontend"],
+    color: "#7a5a9a",
+    featured: false,
+  },
+  {
+    id: "lucky-break",
+    title: "Lucky Break Website",
+    url: "https://lucky-break.onrender.com",
+    description:
+      "Billiards gambling platform for Lucky Taya group of companies — built with frontend, devops, and minor backend contributions.",
+    role: "Mainly contributed as devops and frontend with minor backend of the project.",
+    tags: ["Frontend", "DevOps", "Backend"],
+    color: "#9a7a3a",
+    featured: true,
+  },
+  {
+    id: "top-asia-talent",
+    title: "Top Asia Talent Portal",
+    url: "https://www.topasiamanagement.com/TalentPortal",
+    description:
+      "Official talent portal for Top Asia Management Solutions — a full-stack internal system for HR and recruitment.",
+    role: "Mainly contributed as the full stack developer of the project.",
+    tags: ["Frontend", "Full Stack"],
+    color: "#c8602a",
+    featured: true,
+  },
+];
+
 export const experiences = [
   {
     id: "top-asia",

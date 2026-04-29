@@ -5,7 +5,8 @@ import { Mail, Phone, MapPin, GraduationCap, Github, Linkedin } from "lucide-rea
 import ExperienceCard from "@/components/ExperienceCard";
 import ExperienceModal from "@/components/ExperienceModal";
 import SkillBadge from "@/components/SkillBadge";
-import { profile, education, skills, experiences } from "./data";
+import ProjectCard from "@/components/ProjectCard";
+import { profile, education, skills, experiences, projects } from "./data";
 
 type Experience = (typeof experiences)[number];
 
@@ -192,15 +193,38 @@ export default function Home() {
                 />
               ))}
 
-              {/* Footer note */}
-              <p
-                className="text-center text-xs font-mono text-[#3a3030] mt-2"
-                style={{ animation: "fadeIn 0.6s ease 0.6s forwards", opacity: 0 }}
-              >
-                Built with Next.js · Deployed on Vercel
-              </p>
             </div>
           </div>
+
+          {/* ─── PROJECTS ─── */}
+          <section className="mt-10">
+            <div
+              className="flex items-center justify-between mb-5"
+              style={{ animation: "fadeUp 0.6s ease 0.3s forwards", opacity: 0 }}
+            >
+              <h2 className="text-xs font-mono text-[#8a8070] uppercase tracking-widest flex items-center gap-2">
+                Featured Projects
+                <span className="text-[#4a4040]">— click to visit</span>
+              </h2>
+              <span className="text-xs font-mono text-[#4a4040]">{projects.length} projects</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {projects.map((project, i) => (
+                <ProjectCard key={project.id} project={project} index={i} />
+              ))}
+            </div>
+          </section>
+
+          {/* Footer */}
+          <footer
+            className="mt-10 pt-6 border-t border-[#1e1e1e] text-center"
+            style={{ animation: "fadeIn 0.6s ease 0.8s forwards", opacity: 0 }}
+          >
+            <p className="text-xs font-mono text-[#3a3030]">
+              Built with Next.js · Deployed on Vercel
+            </p>
+          </footer>
         </div>
       </main>
 
