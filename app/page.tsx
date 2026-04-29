@@ -21,10 +21,11 @@ export default function Home() {
           style={{ background: "radial-gradient(ellipse, #c8602a 0%, transparent 70%)" }}
         />
 
-        <div className="relative max-w-5xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
+        <div className="relative max-w-5xl mx-auto px-4 pt-6 pb-10 sm:px-6 lg:px-8">
           {/* ─── HERO ─── */}
           <header
-            className="mb-10"
+            id="about"
+            className="mb-10 scroll-mt-20"
             style={{ animation: "fadeUp 0.7s ease forwards", opacity: 0 }}
           >
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
@@ -172,7 +173,7 @@ export default function Home() {
             </div>
 
             {/* ─── RIGHT COL (Experience) ─── */}
-            <div className="lg:col-span-2 flex flex-col gap-4">
+            <div id="experience" className="lg:col-span-2 flex flex-col gap-4 scroll-mt-20">
               <div
                 className="flex items-center justify-between"
                 style={{ animation: "fadeUp 0.6s ease 0.1s forwards", opacity: 0 }}
@@ -197,7 +198,7 @@ export default function Home() {
           </div>
 
           {/* ─── PROJECTS ─── */}
-          <section className="mt-10">
+          <section id="projects" className="mt-10 scroll-mt-20">
             <div
               className="flex items-center justify-between mb-5"
               style={{ animation: "fadeUp 0.6s ease 0.3s forwards", opacity: 0 }}
@@ -218,12 +219,23 @@ export default function Home() {
 
           {/* Footer */}
           <footer
-            className="mt-10 pt-6 border-t border-[#1e1e1e] text-center"
+            id="contact"
+            className="mt-10 pt-6 border-t border-[#1e1e1e] scroll-mt-20"
             style={{ animation: "fadeIn 0.6s ease 0.8s forwards", opacity: 0 }}
           >
-            <p className="text-xs font-mono text-[#3a3030]">
-              Built with Next.js · Deployed on Vercel
-            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4 text-xs font-mono text-[#6a6058]">
+                <a href="mailto:raceljude@gmail.com" className="hover:text-[#c8602a] transition-colors flex items-center gap-1.5">
+                  <Mail size={11} /> raceljude@gmail.com
+                </a>
+                <a href="tel:+639683971574" className="hover:text-[#c8602a] transition-colors flex items-center gap-1.5">
+                  <Phone size={11} /> +63 968 397 1574
+                </a>
+              </div>
+              <p className="text-xs font-mono text-[#3a3030]">
+                Built with Next.js · Deployed on Vercel
+              </p>
+            </div>
           </footer>
         </div>
       </main>
