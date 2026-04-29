@@ -1,0 +1,246 @@
+"use client";
+
+import { useState } from "react";
+import { Mail, Phone, MapPin, GraduationCap, Github, Linkedin } from "lucide-react";
+import ExperienceCard from "@/components/ExperienceCard";
+import ExperienceModal from "@/components/ExperienceModal";
+import SkillBadge from "@/components/SkillBadge";
+import ProjectCard from "@/components/ProjectCard";
+import { profile, education, skills, experiences, projects } from "./data";
+
+type Experience = (typeof experiences)[number];
+
+export default function Home() {
+  const [selectedExp, setSelectedExp] = useState<Experience | null>(null);
+
+  return (
+    <>
+      <main className="min-h-screen bg-[#0f0f0f] text-[#f5f0e8]">
+        {/* Ambient glow */}
+        <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full opacity-20 pointer-events-none blur-[120px]"
+          style={{ background: "radial-gradient(ellipse, #c8602a 0%, transparent 70%)" }}
+        />
+
+        <div className="relative max-w-5xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
+          {/* ─── HERO ─── */}
+          <header
+            className="mb-10"
+            style={{ animation: "fadeUp 0.7s ease forwards", opacity: 0 }}
+          >
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+              <div>
+                {/* Status */}
+                <div className="inline-flex items-center gap-2 text-xs font-mono text-[#c8602a] bg-[#c8602a]/10 border border-[#c8602a]/20 px-3 py-1 rounded-full mb-4">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#c8602a] animate-pulse" />
+                  Open to opportunities
+                </div>
+
+                {/* Name */}
+                <h1
+                  className="text-4xl sm:text-5xl font-display font-extrabold text-[#f5f0e8] leading-none tracking-tight"
+                  style={{ fontFamily: "var(--font-display)" }}
+                >
+                  {profile.name.split(" ").map((word, i) => (
+                    <span key={i} className={i === 2 ? "text-[#c8602a]" : ""}>
+                      {word}{" "}
+                    </span>
+                  ))}
+                </h1>
+
+                <p className="mt-2 text-[#8a8070] font-mono text-sm tracking-wider uppercase">
+                  {profile.title}
+                </p>
+
+                <p className="mt-3 max-w-md text-[#9a9080] text-sm leading-relaxed">
+                  {profile.tagline}
+                </p>
+              </div>
+
+              {/* Contact cluster */}
+              <div className="flex flex-col gap-2 text-xs font-mono text-[#6a6058] shrink-0">
+                <a
+                  href={`mailto:${profile.email}`}
+                  className="flex items-center gap-2 hover:text-[#c8602a] transition-colors"
+                >
+                  <Mail size={12} />
+                  {profile.email}
+                </a>
+                <a
+                  href={`tel:${profile.phone}`}
+                  className="flex items-center gap-2 hover:text-[#c8602a] transition-colors"
+                >
+                  <Phone size={12} />
+                  {profile.phone}
+                </a>
+                <span className="flex items-center gap-2">
+                  <MapPin size={12} />
+                  Makati, Metro Manila
+                </span>
+                <div className="flex items-center gap-3 mt-1">
+                  <a
+                    href="https://github.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-1.5 rounded-md border border-[#2a2a2a] hover:border-[#c8602a] hover:text-[#c8602a] transition-all"
+                    aria-label="GitHub"
+                  >
+                    <Github size={13} />
+                  </a>
+                  <a
+                    href="https://linkedin.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-1.5 rounded-md border border-[#2a2a2a] hover:border-[#c8602a] hover:text-[#c8602a] transition-all"
+                    aria-label="LinkedIn"
+                  >
+                    <Linkedin size={13} />
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="mt-8 h-px bg-gradient-to-r from-[#c8602a]/40 via-[#2a2a2a] to-transparent" />
+          </header>
+
+          {/* ─── GRID ─── */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* ─── LEFT COL ─── */}
+            <div className="flex flex-col gap-6">
+              {/* Education */}
+              <section
+                className="rounded-xl border border-[#2a2a2a] bg-[#141414] p-5"
+                style={{ animation: "fadeUp 0.6s ease 0.15s forwards", opacity: 0 }}
+              >
+                <h2 className="text-xs font-mono text-[#8a8070] uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <GraduationCap size={12} />
+                  Education
+                </h2>
+                <p className="text-[#f5f0e8] font-display font-semibold text-sm leading-snug">
+                  {education.school}
+                </p>
+                <p className="text-[#8a8070] text-xs mt-1 leading-relaxed">{education.degree}</p>
+                <p className="text-[#6a6058] text-xs mt-0.5">{education.major}</p>
+                <div className="mt-3 pt-3 border-t border-[#2a2a2a] flex items-center justify-between">
+                  <span className="text-xs font-mono text-[#6a6058]">{education.years}</span>
+                  <span className="text-xs font-mono px-2 py-0.5 rounded bg-[#c8602a]/10 text-[#c8602a] border border-[#c8602a]/20">
+                    BSIT
+                  </span>
+                </div>
+              </section>
+
+              {/* Languages */}
+              <section
+                className="rounded-xl border border-[#2a2a2a] bg-[#141414] p-5"
+                style={{ animation: "fadeUp 0.6s ease 0.2s forwards", opacity: 0 }}
+              >
+                <h2 className="text-xs font-mono text-[#8a8070] uppercase tracking-widest mb-4">
+                  Languages
+                </h2>
+                <div className="flex flex-col gap-2">
+                  {profile.languages.map((lang) => (
+                    <div key={lang} className="flex items-center justify-between">
+                      <span className="text-sm text-[#c8c0b0]">{lang}</span>
+                      <div className="flex gap-1">
+                        {[...Array(5)].map((_, i) => (
+                          <div
+                            key={i}
+                            className="w-5 h-1 rounded-sm"
+                            style={{ background: i < 5 ? "#c8602a" : "#2a2a2a" }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* Skills */}
+              <section
+                className="rounded-xl border border-[#2a2a2a] bg-[#141414] p-5"
+                style={{ animation: "fadeUp 0.6s ease 0.25s forwards", opacity: 0 }}
+              >
+                <h2 className="text-xs font-mono text-[#8a8070] uppercase tracking-widest mb-4">
+                  Skills
+                </h2>
+                <div className="flex flex-wrap gap-2">
+                  {skills.map((skill, i) => (
+                    <SkillBadge key={skill.label} skill={skill} index={i} />
+                  ))}
+                </div>
+              </section>
+            </div>
+
+            {/* ─── RIGHT COL (Experience) ─── */}
+            <div className="lg:col-span-2 flex flex-col gap-4">
+              <div
+                className="flex items-center justify-between"
+                style={{ animation: "fadeUp 0.6s ease 0.1s forwards", opacity: 0 }}
+              >
+                <h2 className="text-xs font-mono text-[#8a8070] uppercase tracking-widest flex items-center gap-2">
+                  Experience
+                  <span className="text-[#4a4040]">— click to explore</span>
+                </h2>
+                <span className="text-xs font-mono text-[#4a4040]">{experiences.length} roles</span>
+              </div>
+
+              {experiences.map((exp, i) => (
+                <ExperienceCard
+                  key={exp.id}
+                  experience={exp}
+                  index={i}
+                  onClick={setSelectedExp}
+                />
+              ))}
+
+            </div>
+          </div>
+
+          {/* ─── PROJECTS ─── */}
+          <section className="mt-10">
+            <div
+              className="flex items-center justify-between mb-5"
+              style={{ animation: "fadeUp 0.6s ease 0.3s forwards", opacity: 0 }}
+            >
+              <h2 className="text-xs font-mono text-[#8a8070] uppercase tracking-widest flex items-center gap-2">
+                Featured Projects
+                <span className="text-[#4a4040]">— click to visit</span>
+              </h2>
+              <span className="text-xs font-mono text-[#4a4040]">{projects.length} projects</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {projects.map((project, i) => (
+                <ProjectCard key={project.id} project={project} index={i} />
+              ))}
+            </div>
+          </section>
+
+          {/* Footer */}
+          <footer
+            className="mt-10 pt-6 border-t border-[#1e1e1e] text-center"
+            style={{ animation: "fadeIn 0.6s ease 0.8s forwards", opacity: 0 }}
+          >
+            <p className="text-xs font-mono text-[#3a3030]">
+              Built with Next.js · Deployed on Vercel
+            </p>
+          </footer>
+        </div>
+      </main>
+
+      {/* Modal */}
+      <ExperienceModal experience={selectedExp} onClose={() => setSelectedExp(null)} />
+
+      <style jsx global>{`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(16px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+      `}</style>
+    </>
+  );
+}
