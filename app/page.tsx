@@ -6,22 +6,35 @@ import ExperienceCard from "@/components/ExperienceCard";
 import ExperienceModal from "@/components/ExperienceModal";
 import SkillBadge from "@/components/SkillBadge";
 import ProjectCard from "@/components/ProjectCard";
+import ExperienceDetailSection from "@/components/ExperienceDetailSection";
+import ScrollBackground from "@/components/ScrollBackground";
+import Navbar from "@/components/Navbar";
 import { profile, education, skills, experiences, projects } from "./data";
 
 type Experience = (typeof experiences)[number];
 
 export default function Home() {
   const [selectedExp, setSelectedExp] = useState<Experience | null>(null);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+
+  const isDark = theme === "dark";
+
+  const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
 
   return (
     <>
-      <main className="min-h-screen bg-[#0f0f0f] text-[#f5f0e8]">
-        {/* Ambient glow */}
-        <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full opacity-20 pointer-events-none blur-[120px]"
-          style={{ background: "radial-gradient(ellipse, #c8602a 0%, transparent 70%)" }}
-        />
+      <div
+        style={{
+          background: isDark ? "#0f0f0f" : "#f0ebe0",
+          color: isDark ? "#f5f0e8" : "#1a1008",
+          minHeight: "100vh",
+          transition: "background 0.4s ease, color 0.4s ease",
+        }}
+      >
+        <Navbar theme={theme} onThemeToggle={toggleTheme} />
+        <ScrollBackground theme={theme} />
 
-        <div className="relative max-w-5xl mx-auto px-4 pt-6 pb-10 sm:px-6 lg:px-8">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 pt-6 pb-10 sm:px-6 lg:px-8">
           {/* ─── HERO ─── */}
           <header
             id="about"
@@ -38,8 +51,8 @@ export default function Home() {
 
                 {/* Name */}
                 <h1
-                  className="text-4xl sm:text-5xl font-display font-extrabold text-[#f5f0e8] leading-none tracking-tight"
-                  style={{ fontFamily: "var(--font-display)" }}
+                  className="text-4xl sm:text-5xl font-display font-extrabold leading-none tracking-tight"
+                  style={{ fontFamily: "var(--font-display)", color: isDark ? "#f5f0e8" : "#1a1008" }}
                 >
                   {profile.name.split(" ").map((word, i) => (
                     <span key={i} className={i === 2 ? "text-[#c8602a]" : ""}>
@@ -48,11 +61,11 @@ export default function Home() {
                   ))}
                 </h1>
 
-                <p className="mt-2 text-[#8a8070] font-mono text-sm tracking-wider uppercase">
+                <p className="mt-2 font-mono text-sm tracking-wider uppercase" style={{ color: isDark ? "#8a8070" : "#9a7060" }}>
                   {profile.title}
                 </p>
 
-                <p className="mt-3 max-w-md text-[#9a9080] text-sm leading-relaxed">
+                <p className="mt-3 max-w-md text-sm leading-relaxed" style={{ color: isDark ? "#9a9080" : "#6a5040" }}>
                   {profile.tagline}
                 </p>
               </div>
@@ -79,7 +92,7 @@ export default function Home() {
                 </span>
                 <div className="flex items-center gap-3 mt-1">
                   <a
-                    href="https://github.com"
+                    href="https://github.com/raceljude"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-1.5 rounded-md border border-[#2a2a2a] hover:border-[#c8602a] hover:text-[#c8602a] transition-all"
@@ -88,7 +101,7 @@ export default function Home() {
                     <Github size={13} />
                   </a>
                   <a
-                    href="https://linkedin.com"
+                    href="https://www.linkedin.com/in/racel-jude-marahay-76b15a29b"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-1.5 rounded-md border border-[#2a2a2a] hover:border-[#c8602a] hover:text-[#c8602a] transition-all"
@@ -197,6 +210,9 @@ export default function Home() {
             </div>
           </div>
 
+          {/* ─── DETAILED EXPERIENCE ─── */}
+          <ExperienceDetailSection experiences={experiences} />
+
           {/* ─── PROJECTS ─── */}
           <section id="projects" className="mt-10 scroll-mt-20">
             <div
@@ -238,7 +254,7 @@ export default function Home() {
             </div>
           </footer>
         </div>
-      </main>
+      </div>
 
       {/* Modal */}
       <ExperienceModal experience={selectedExp} onClose={() => setSelectedExp(null)} />

@@ -11,6 +11,9 @@ export const metadata: Metadata = {
       "Junior Software Developer specializing in MERN/PERN stack, Google Workspace automation, and full-stack web applications.",
     type: "website",
   },
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
