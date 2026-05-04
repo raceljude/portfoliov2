@@ -1,16 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import type { ComponentType, CSSProperties } from "react";
+import type { LucideIcon } from "lucide-react";
 import {
   Monitor, Server, GitBranch, Cloud, Wrench, CheckCircle2,
 } from "lucide-react";
 import { tokens } from "@/lib/theme";
 import { skillGroups } from "@/config/personal";
 
-type IconComponent = ComponentType<{ size?: number; style?: CSSProperties }>;
-
-const IconMap: Record<string, IconComponent> = {
+const IconMap: Record<string, LucideIcon> = {
   Monitor,
   Server,
   GitBranch,
