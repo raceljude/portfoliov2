@@ -1,4 +1,5 @@
 "use client";
+import { P } from "@/lib/theme";
 
 import { useEffect, useRef } from "react";
 import { X, MapPin, Calendar, Code2 } from "lucide-react";

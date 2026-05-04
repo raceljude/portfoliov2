@@ -1,8 +1,8 @@
 "use client";
+import { P } from "@/lib/theme";
 
 import { useEffect, useState, useRef } from "react";
 
-const P = { deepRed: "#96312e", midRed: "#d1675a", amber: "#ffbf6b", blue: "#398eb2", navy: "#153d52" };
 
 const sectionThemes = [
   {
@@ -129,12 +129,25 @@ export default function ScrollBackground({ theme }: Props) {
         }}/>
       ))}
 
+      {/* Gridlines — soft horizontal + vertical lines */}
       <div style={{
         position: "absolute", inset: 0,
-        backgroundImage: `radial-gradient(circle, ${isDark ? `rgba(57,142,178,0.05)` : `rgba(21,61,82,0.04)`} 1px, transparent 1px)`,
-        backgroundSize: "28px 28px",
-        maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%)",
-        WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%)",
+        backgroundImage: isDark
+          ? "linear-gradient(rgba(57,142,178,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(57,142,178,0.06) 1px, transparent 1px)"
+          : "linear-gradient(rgba(21,61,82,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(21,61,82,0.05) 1px, transparent 1px)",
+        backgroundSize: "60px 60px",
+        maskImage: "radial-gradient(ellipse 90% 90% at 50% 40%, black 20%, transparent 80%)",
+        WebkitMaskImage: "radial-gradient(ellipse 90% 90% at 50% 40%, black 20%, transparent 80%)",
+      }}/>
+      {/* Subtle dot at each intersection */}
+      <div style={{
+        position: "absolute", inset: 0,
+        backgroundImage: isDark
+          ? "radial-gradient(circle, rgba(255,191,107,0.10) 1px, transparent 1px)"
+          : "radial-gradient(circle, rgba(150,49,46,0.07) 1px, transparent 1px)",
+        backgroundSize: "60px 60px",
+        maskImage: "radial-gradient(ellipse 80% 80% at 50% 40%, black 10%, transparent 70%)",
+        WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 40%, black 10%, transparent 70%)",
       }}/>
 
       {t.particles.map((p, i) => (

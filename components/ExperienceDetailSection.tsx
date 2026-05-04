@@ -1,4 +1,5 @@
 "use client";
+import { P } from "@/lib/theme";
 
 import { MapPin, Calendar, Code2, ChevronRight } from "lucide-react";
 

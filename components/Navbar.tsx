@@ -1,10 +1,10 @@
 "use client";
+import { P } from "@/lib/theme";
 
 import { useEffect, useState, useRef } from "react";
 import { Sun, Moon } from "lucide-react";
 import RJMMIcon from "./RJMMIcon";
 
-const P = { deepRed: "#96312e", midRed: "#d1675a", amber: "#ffbf6b", blue: "#398eb2", navy: "#153d52" };
 
 const navLinks = [
   { label: "About",        href: "#about",             id: "about" },

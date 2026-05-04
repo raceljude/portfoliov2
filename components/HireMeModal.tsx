@@ -1,16 +1,17 @@
 "use client";
+import { P } from "@/lib/theme";
+import { profile } from "@/config/personal";
 
 import { useEffect, useRef, useState } from "react";
 import { X, Mail, Phone, MapPin, Github, Linkedin, MessageCircle, Copy, Check } from "lucide-react";
 
-const P = { deepRed: "#96312e", midRed: "#d1675a", amber: "#ffbf6b", blue: "#398eb2", navy: "#153d52" };
 
 const contacts = [
-  { icon: Mail,     label: "Email",         value: "raceljude@gmail.com",                                       href: "mailto:raceljude@gmail.com",                                hint: "Best for project inquiries",         color: P.midRed,  copyable: true  },
-  { icon: Phone,    label: "Phone / Viber",  value: "+63 968 397 1574",                                          href: "tel:+639683971574",                                         hint: "Mon–Fri, 9AM–6PM PHT",               color: P.amber,   copyable: true  },
-  { icon: Linkedin, label: "LinkedIn",       value: "racel-jude-marahay",                                        href: "https://www.linkedin.com/in/racel-jude-marahay-76b15a29b",  hint: "Connect professionally",             color: P.blue,    copyable: false },
-  { icon: Github,   label: "GitHub",         value: "github.com/raceljude",                                      href: "https://github.com/raceljude",                               hint: "See my open source work",            color: P.navy,    copyable: false },
-  { icon: MapPin,   label: "Location",       value: "Makati City, Metro Manila, PH",                             href: null,                                                        hint: "Open to remote & on-site roles",     color: P.deepRed, copyable: false },
+  { icon: Mail,     label: "Email",         value: profile.email,                                       href: `mailto:${profile.email}`,                                hint: "Best for project inquiries",         color: P.midRed,  copyable: true  },
+  { icon: Phone,    label: "Phone / Viber",  value: profile.phoneDisplay,                                          href: `tel:${profile.phone}`,                                         hint: "Mon–Fri, 9AM–6PM PHT",               color: P.amber,   copyable: true  },
+  { icon: Linkedin, label: "LinkedIn",       value: "racel-jude-marahay",                                        href: profile.linkedin,  hint: "Connect professionally",             color: P.blue,    copyable: false },
+  { icon: Github,   label: "GitHub",         value: "github.com/raceljude",                                      href: profile.github,                               hint: "See my open source work",            color: P.navy,    copyable: false },
+  { icon: MapPin,   label: "Location",       value: profile.location,                             href: null,                                                        hint: "Open to remote & on-site roles",     color: P.deepRed, copyable: false },
 ];
 
 function CopyButton({ text, isDark }: { text: string; isDark: boolean }) {
@@ -110,7 +111,7 @@ export default function HireMeModal({ isOpen, onClose, isDark }: Props) {
           </div>
 
           <div className="mt-5 pt-4" style={{ borderTop: `1px solid ${border}` }}>
-            <a href="mailto:raceljude@gmail.com"
+            <a href={`mailto:${profile.email}`}
               className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all"
               style={{ background: P.midRed, color: "#fff" }}
               onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = P.deepRed}

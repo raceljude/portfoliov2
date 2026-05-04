@@ -1,4 +1,5 @@
 "use client";
+import { P } from "@/lib/theme";
 
 import { ArrowUpRight } from "lucide-react";
 
