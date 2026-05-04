@@ -44,7 +44,7 @@ export const projects = [
       "College project donated to CEMO Marikina. A waste management web platform built for real-world civic use.",
     role: "Mainly contributed as frontend and devops of the project.",
     tags: ["Frontend", "DevOps", "Full Stack"],
-    color: "#5a8a6a",
+    color: "#d1675a",
     featured: true,
   },
   {
@@ -55,7 +55,7 @@ export const projects = [
       "Official website for LCCAD Holdings — a corporate web presence built for a professional audience.",
     role: "Mainly contributed as frontend of the project.",
     tags: ["Frontend"],
-    color: "#5a6a8a",
+    color: "#398eb2",
     featured: false,
   },
   {
@@ -66,7 +66,7 @@ export const projects = [
       "Official company website for 3B Technologies Solutions Incorporated — showcasing their services and identity.",
     role: "Mainly contributed as frontend of the project.",
     tags: ["Frontend"],
-    color: "#7a5a9a",
+    color: "#96312e",
     featured: false,
   },
   {
@@ -77,7 +77,7 @@ export const projects = [
       "Billiards gambling platform for Lucky Taya group of companies — built with frontend, devops, and minor backend contributions.",
     role: "Mainly contributed as devops and frontend with minor backend of the project.",
     tags: ["Frontend", "DevOps", "Backend"],
-    color: "#9a7a3a",
+    color: "#ffbf6b",
     featured: true,
   },
   {
@@ -88,7 +88,7 @@ export const projects = [
       "Official talent portal for Top Asia Management Solutions — a full-stack internal system for HR and recruitment.",
     role: "Mainly contributed as the full stack developer of the project.",
     tags: ["Frontend", "Full Stack"],
-    color: "#c8602a",
+    color: "#d1675a",
     featured: true,
   },
 ];
@@ -101,7 +101,7 @@ export const experiences = [
     period: "April 2025 – Present",
     location: "219 Wilson St. Greenhills, San Juan City",
     status: "current",
-    color: "#c8602a",
+    color: "#d1675a",
     summary:
       "Building Google Workspace-powered internal tools — from HRIS to ticketing systems — that streamline operations for Top Asia Management.",
     highlights: [
@@ -121,7 +121,7 @@ export const experiences = [
     period: "August 2024 – January 2025",
     location: "Unit 404 Crowne Bay Tower, Roxas Blvd, Parañaque",
     status: "past",
-    color: "#5a8a6a",
+    color: "#398eb2",
     summary:
       "Client-facing full-stack development using MERN and PERN stacks, shipping production software with modern frontend tooling and managed deployments.",
     highlights: [
@@ -138,7 +138,7 @@ export const experiences = [
     period: "January 2024 – August 2024",
     location: "1835 E Rodriguez Sr. Ave, Cubao, Quezon City",
     status: "past",
-    color: "#5a6a8a",
+    color: "#96312e",
     summary:
       "Hands-on technical support across multiple company locations — keeping hardware and software running smoothly in a construction company environment.",
     highlights: [

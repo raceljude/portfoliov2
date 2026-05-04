@@ -16,7 +16,7 @@ const config: Config = {
       colors: {
         ink: "#0f0f0f",
         paper: "#f5f0e8",
-        accent: "#c8602a",
+        accent: "#d1675a",
         muted: "#8a8070",
         card: "#1a1a1a",
         border: "#2a2a2a",
