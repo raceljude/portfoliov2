@@ -10,6 +10,8 @@ import ExperienceDetailSection from "@/components/ExperienceDetailSection";
 import ScrollBackground        from "@/components/ScrollBackground";
 import Navbar                  from "@/components/Navbar";
 import HireMeModal             from "@/components/HireMeModal";
+import SkillsSection           from "@/components/SkillsSection";
+import TypingTitle             from "@/components/TypingTitle";
 import { profile, education, skills, experiences, projects } from "@/config/personal";
 import { P, tokens } from "@/lib/theme";
 
@@ -65,9 +67,9 @@ export default function Home() {
                   ))}
                   <span style={{ color: P.midRed }}>{profile.lastName}</span>
                 </h1>
-                <p className="mt-2 font-mono text-sm tracking-wider uppercase" style={{ color: P.blue }}>
-                  {profile.title}
-                </p>
+                <div className="mt-2 h-6 flex items-center">
+                  <TypingTitle titles={profile.titles} color={P.blue} />
+                </div>
                 <p className="mt-3 max-w-md text-sm leading-relaxed" style={{ color: t.textSec }}>
                   {profile.tagline}
                 </p>
@@ -229,6 +231,9 @@ export default function Home() {
           {/* ── WORK HISTORY ── */}
           <ExperienceDetailSection experiences={experiences} isDark={isDark} />
 
+          {/* ── SKILLS ── */}
+          <SkillsSection isDark={isDark} />
+
           {/* ── PROJECTS ── */}
           <section id="projects" className="mt-14 scroll-mt-20">
             <div
@@ -253,10 +258,10 @@ export default function Home() {
             <div style={{ animation: "fadeUp 0.6s ease 0.1s forwards", opacity: 0 }}>
               <p className="text-xs font-mono uppercase tracking-widest mb-1" style={{ color: t.textMut }}>Get in touch</p>
               <h2 className="text-xl font-bold mb-2" style={{ fontFamily: "var(--font-display)", color: t.textPri }}>
-                {"Let's work together"}
+                {profile.contactHeading}
               </h2>
               <p className="text-sm mb-8 max-w-lg" style={{ color: t.textSec }}>
-                {"I'm open to full-time roles, freelance projects, and contract work. Whether you have a project in mind or just want to connect — reach out."}
+                {profile.contactSubtext}
               </p>
             </div>
 
@@ -268,11 +273,11 @@ export default function Home() {
               {(
                 [
                   { icon: Mail,          label: "Email",    value: profile.email,          href: "mailto:" + profile.email,   hint: "Best for project inquiries",         color: P.midRed  },
-                  { icon: Phone,         label: "Phone",    value: profile.phoneDisplay,   href: "tel:" + profile.phone,      hint: "Mon–Fri, 9AM–6PM PHT",               color: P.amber   },
-                  { icon: Linkedin,      label: "LinkedIn", value: "racel-jude-marahay",   href: profile.linkedin,            hint: "Connect professionally",             color: P.blue    },
-                  { icon: Github,        label: "GitHub",   value: "github.com/raceljude",  href: profile.github,              hint: "See my open source work",            color: P.navy    },
-                  { icon: MapPin,        label: "Location", value: profile.locationShort,  href: null,                        hint: "Open to remote and on-site",         color: P.deepRed },
-                  { icon: MessageSquare, label: "Status",   value: "Open to hire",         href: null,                        hint: "Actively looking for opportunities",  color: P.amber   },
+                  { icon: Phone,         label: "Phone",    value: profile.phoneDisplay,   href: "tel:" + profile.phone,      hint: profile.phoneHint,               color: P.amber   },
+                  { icon: Linkedin,      label: "LinkedIn", value: profile.linkedinDisplay, href: profile.linkedin,            hint: "Connect professionally",             color: P.blue    },
+                  { icon: Github,        label: "GitHub",   value: profile.githubDisplay,   href: profile.github,              hint: "See my open source work",            color: P.navy    },
+                  { icon: MapPin,        label: "Location", value: profile.locationShort,  href: null,                        hint: profile.locationHint,         color: P.deepRed },
+                  { icon: MessageSquare, label: "Status",   value: profile.statusText,     href: null,                        hint: profile.statusHint,                    color: P.amber   },
                 ] as const
               ).map(c => {
                 const Icon = c.icon;
@@ -347,8 +352,8 @@ export default function Home() {
             >
               <div>
                 <p className="text-xs font-mono uppercase tracking-widest mb-1" style={{ color: P.blue }}>Ready to start?</p>
-                <h3 className="text-xl font-bold text-white mb-1" style={{ fontFamily: "var(--font-display)" }}>Drop me a message</h3>
-                <p className="text-sm" style={{ color: "#7aaabe" }}>I typically respond within 24 hours.</p>
+                <h3 className="text-xl font-bold text-white mb-1" style={{ fontFamily: "var(--font-display)" }}>{profile.ctaHeading}</h3>
+                <p className="text-sm" style={{ color: "#7aaabe" }}>{profile.ctaSubtext}</p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 shrink-0">
                 <a

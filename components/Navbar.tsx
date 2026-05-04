@@ -1,5 +1,6 @@
 "use client";
 import { P } from "@/lib/theme";
+import { profile } from "@/config/personal";
 
 import { useEffect, useState, useRef } from "react";
 import { Sun, Moon } from "lucide-react";
@@ -10,6 +11,7 @@ const navLinks = [
   { label: "About",        href: "#about",             id: "about" },
   { label: "Experience",   href: "#experience",        id: "experience" },
   { label: "Work History", href: "#experience-detail", id: "experience-detail" },
+  { label: "Skills",       href: "#skills",            id: "skills" },
   { label: "Projects",     href: "#projects",          id: "projects" },
   { label: "Contact",      href: "#contact",           id: "contact" },
 ];
@@ -104,10 +106,10 @@ export default function Navbar({ theme, onThemeToggle, onHireMe, isDark }: Navba
               <div className="hidden sm:flex flex-col leading-none">
                 <span className="text-[11px] font-extrabold tracking-widest uppercase"
                   style={{ fontFamily: "var(--font-display)", color: isDark ? "#f0ece8" : "#0e1e2a" }}>
-                  Racel Jude
+                  {profile.firstName}
                 </span>
                 <span className="text-[9px] font-mono tracking-widest uppercase mt-0.5" style={{ color: linkColor }}>
-                  Marahay
+                  {profile.lastName}
                 </span>
               </div>
             </button>

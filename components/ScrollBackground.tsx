@@ -66,6 +66,21 @@ const sectionThemes = [
     ],
   },
   {
+    id: "skills",
+    orbs: [
+      { x: "30%",  y: "8%",  size: 500, color: P.blue,    opacity: 0.11 },
+      { x: "75%",  y: "35%", size: 320, color: P.deepRed, opacity: 0.08 },
+      { x: "50%",  y: "70%", size: 220, color: P.amber,   opacity: 0.06 },
+    ],
+    particles: [
+      { text: "React",  size: 30, x: "6%",  y: "18%", dur: 8  },
+      { text: "npm i",  size: 22, x: "68%", y: "10%", dur: 10 },
+      { text: "ts",     size: 36, x: "44%", y: "58%", dur: 7  },
+      { text: "git",    size: 24, x: "80%", y: "60%", dur: 11 },
+      { text: "SQL",    size: 20, x: "20%", y: "78%", dur: 9  },
+    ],
+  },
+  {
     id: "contact",
     orbs: [
       { x: "50%",  y: "10%", size: 480, color: P.midRed,  opacity: 0.11 },

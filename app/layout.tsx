@@ -1,26 +1,21 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { profile } from "@/config/personal";
 
 export const metadata: Metadata = {
-  title: "Racel Jude Marahay — Software Developer",
-  description:
-    "Junior Software Developer specializing in MERN/PERN stack, Google Workspace automation, and full-stack web applications.",
+  title:       profile.siteTitle,
+  description: profile.siteDescription,
   openGraph: {
-    title: "Racel Jude Marahay — Software Developer",
-    description:
-      "Junior Software Developer specializing in MERN/PERN stack, Google Workspace automation, and full-stack web applications.",
-    type: "website",
+    title:       profile.siteTitle,
+    description: profile.siteDescription,
+    type:        "website",
   },
   icons: {
     icon: "/favicon.svg",
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
