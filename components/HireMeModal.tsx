@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { X, Mail, Phone, MapPin, Github, Linkedin, MessageCircle, Copy, Check } from "lucide-react";
 import { P } from "@/lib/theme";
-import { profile } from "@/config/personal";
 import { tokens } from "@/lib/theme";
 
 function CopyButton({ text, isDark }: { text: string; isDark: boolean }) {
@@ -34,7 +33,14 @@ function CopyButton({ text, isDark }: { text: string; isDark: boolean }) {
   );
 }
 
-interface Props { isOpen: boolean; onClose: () => void; isDark: boolean; }
+interface ProfileProp {
+  email: string; phone: string; phoneDisplay: string; phoneHint: string;
+  location: string; locationHint: string;
+  github: string; githubDisplay: string;
+  linkedin: string; linkedinDisplay: string;
+  statusText: string; hireMeHeading: string; hireMeSubtext: string;
+}
+interface Props { isOpen: boolean; onClose: () => void; isDark: boolean; profile: ProfileProp; }
 
 export default function HireMeModal({ isOpen, onClose, isDark }: Props) {
   const overlayRef = useRef<HTMLDivElement>(null);

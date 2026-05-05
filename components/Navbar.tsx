@@ -1,6 +1,5 @@
 "use client";
 import { P } from "@/lib/theme";
-import { profile } from "@/config/personal";
 
 import { useEffect, useState, useRef } from "react";
 import { Sun, Moon } from "lucide-react";
@@ -21,9 +20,11 @@ interface NavbarProps {
   onThemeToggle: () => void;
   onHireMe: () => void;
   isDark: boolean;
+  profileFirstName?: string;
+  profileLastName?: string;
 }
 
-export default function Navbar({ theme, onThemeToggle, onHireMe, isDark }: NavbarProps) {
+export default function Navbar({ theme, onThemeToggle, onHireMe, isDark, profileFirstName = "Racel Jude", profileLastName = "Marahay" }: NavbarProps) {
   const [scrolled,    setScrolled]    = useState(false);
   const [menuOpen,    setMenuOpen]    = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -106,10 +107,10 @@ export default function Navbar({ theme, onThemeToggle, onHireMe, isDark }: Navba
               <div className="hidden sm:flex flex-col leading-none">
                 <span className="text-[11px] font-extrabold tracking-widest uppercase"
                   style={{ fontFamily: "var(--font-display)", color: isDark ? "#f0ece8" : "#0e1e2a" }}>
-                  {profile.firstName}
+                  {profileFirstName}
                 </span>
                 <span className="text-[9px] font-mono tracking-widest uppercase mt-0.5" style={{ color: linkColor }}>
-                  {profile.lastName}
+                  {profileLastName}
                 </span>
               </div>
             </button>

@@ -6,7 +6,6 @@ import {
   Monitor, Server, GitBranch, Cloud, Wrench, CheckCircle2,
 } from "lucide-react";
 import { tokens } from "@/lib/theme";
-import { skillGroups } from "@/config/personal";
 
 const IconMap: Record<string, LucideIcon> = {
   Monitor,
@@ -16,9 +15,11 @@ const IconMap: Record<string, LucideIcon> = {
   Wrench,
 };
 
-interface Props { isDark: boolean; }
+interface SkillItem { label: string; level: number; where: string[]; }
+interface SkillGroup { id: string; label: string; color: string; icon: string; desc: string; skills: SkillItem[]; }
+interface Props { isDark: boolean; skillGroups: SkillGroup[]; }
 
-export default function SkillsSection({ isDark }: Props) {
+export default function SkillsSection({ isDark, skillGroups }: Props) {
   const [activeTab, setActiveTab] = useState(skillGroups[0].id);
   const t = tokens(isDark);
 
