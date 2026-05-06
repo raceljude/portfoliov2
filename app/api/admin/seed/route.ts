@@ -53,7 +53,8 @@ export async function POST(req: NextRequest) {
   if (profErr) errors.push("profile: " + profErr.message);
 
   // ── Experiences ───────────────────────────────────────────────
-  for (const [i, exp] of experiences.entries()) {
+  for (let i = 0; i < experiences.length; i++) {
+    const exp = experiences[i];
     const { error } = await db.from("experiences").upsert({
       slug:       exp.id,
       role:       exp.role,
@@ -71,7 +72,8 @@ export async function POST(req: NextRequest) {
   }
 
   // ── Projects ──────────────────────────────────────────────────
-  for (const [i, proj] of projects.entries()) {
+  for (let i = 0; i < projects.length; i++) {
+    const proj = projects[i];
     const { error } = await db.from("projects").upsert({
       slug:        proj.id,
       title:       proj.title,
@@ -94,7 +96,8 @@ export async function POST(req: NextRequest) {
   if (sbErr) errors.push("sidebar_skills: " + sbErr.message);
 
   // ── Skill groups + skills ─────────────────────────────────────
-  for (const [gi, group] of skillGroups.entries()) {
+  for (let gi = 0; gi < skillGroups.length; gi++) {
+    const group = skillGroups[gi];
     const { data: gData, error: gErr } = await db.from("skill_groups").upsert({
       slug:        group.id,
       label:       group.label,
