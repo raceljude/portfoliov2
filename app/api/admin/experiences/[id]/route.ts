@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { getAdminSession } from "@/lib/auth";
+import { revalidatePortfolio } from "@/lib/revalidate";
 
 type UpdateBody = Record<string, unknown>;
 
@@ -9,7 +10,6 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const raw: UpdateBody = await req.json();
-  // Remove immutable fields before updating
   const updateData: UpdateBody = {};
   const skip = new Set(["id", "created_at", "updated_at"]);
   for (const key of Object.keys(raw)) {
@@ -26,6 +26,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  revalidatePortfolio();
   return NextResponse.json(data);
 }
 
@@ -36,5 +37,6 @@ export async function DELETE(_req: NextRequest, { params }: { params: { id: stri
   const db = supabaseAdmin();
   const { error } = await db.from("experiences").delete().eq("id", params.id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  revalidatePortfolio();
   return NextResponse.json({ ok: true });
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { getAdminSession } from "@/lib/auth";
 import { profile, education, experiences, projects, skills, skillGroups } from "@/config/personal";
+import { revalidatePortfolio } from "@/lib/revalidate";
 
 export async function POST(req: NextRequest) {
   if (!(await getAdminSession()))
@@ -126,5 +127,6 @@ export async function POST(req: NextRequest) {
   if (errors.length > 0) {
     return NextResponse.json({ ok: false, errors }, { status: 207 });
   }
+  revalidatePortfolio();
   return NextResponse.json({ ok: true, message: "Database seeded successfully" });
 }

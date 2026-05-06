@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { getAdminSession } from "@/lib/auth";
+import { revalidatePortfolio } from "@/lib/revalidate";
 
 export async function GET() {
   const db = supabaseAdmin();
@@ -15,7 +16,13 @@ export async function PATCH(req: NextRequest) {
 
   const body = await req.json();
   const db = supabaseAdmin();
-  const { data, error } = await db.from("profile").update(body).eq("id", 1).select().single();
+  const { data, error } = await db
+    .from("profile")
+    .update(body)
+    .eq("id", 1)
+    .select()
+    .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  revalidatePortfolio();
   return NextResponse.json(data);
 }
