@@ -191,9 +191,10 @@ function getStaticData(): PortfolioData {
 // ─── Main fetch ───────────────────────────────────────────────
 
 export async function getPortfolioData(): Promise<PortfolioData> {
-  const supabaseUrl    = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const rawUrl         = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+  const supabaseUrl    = rawUrl.replace(/\/+$/, ""); // strip trailing slash → fixes PGRST125
   const supabaseKey    = process.env.SUPABASE_SERVICE_ROLE_KEY   // prefer service key server-side
-                      ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+                      ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
 
   if (!supabaseUrl || !supabaseKey) {
     console.warn("[data] Supabase env vars not set — using static config");
