@@ -42,7 +42,7 @@ interface ProfileProp {
 }
 interface Props { isOpen: boolean; onClose: () => void; isDark: boolean; profile: ProfileProp; }
 
-export default function HireMeModal({ isOpen, onClose, isDark }: Props) {
+export default function HireMeModal({ isOpen, onClose, isDark, profile }: Props) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const t = tokens(isDark);
 
