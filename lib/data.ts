@@ -1,19 +1,14 @@
 /**
  * lib/data.ts
  * ─────────────────────────────────────────────────────────────
- * Single source of truth for all portfolio data on the frontend.
+ * Fetches portfolio data from Supabase on the server side.
+ * Falls back to static config/personal.ts if env vars are missing.
  *
- * Priority:  Supabase (live) → config/personal.ts (fallback)
- *
- * This means:
- *  - If Supabase env vars are set → always reads from the database
- *  - If env vars are missing     → silently falls back to static config
- *
- * Usage (Server Component or API route):
- *   import { getPortfolioData } from "@/lib/data";
- *   const data = await getPortfolioData();
+ * Uses @supabase/supabase-js (same client as API routes) so auth
+ * headers, RLS, and error handling all work identically.
  */
 
+import { createClient } from "@supabase/supabase-js";
 import {
   profile  as staticProfile,
   education as staticEducation,
@@ -75,170 +70,112 @@ export interface PortfolioData {
   skillGroups: SkillGroupData[];
 }
 
-// ─── Supabase row → domain type mappers ───────────────────────
+// ─── Helpers ──────────────────────────────────────────────────
 
-type DbRow = Record<string, unknown>;
+type Row = Record<string, unknown>;
 
-function str(v: unknown, fallback: string): string {
-  return typeof v === "string" ? v : fallback;
-}
-function bool(v: unknown, fallback: boolean): boolean {
-  return typeof v === "boolean" ? v : fallback;
-}
-function strArr(v: unknown, fallback: string[]): string[] {
-  return Array.isArray(v) ? (v as string[]) : fallback;
-}
-function num(v: unknown, fallback: number): number {
-  return typeof v === "number" ? v : fallback;
+function s(v: unknown, fb: string)   { return typeof v === "string"  ? v  : fb; }
+function b(v: unknown, fb: boolean)  { return typeof v === "boolean" ? v  : fb; }
+function n(v: unknown, fb: number)   { return typeof v === "number"  ? v  : fb; }
+function sa(v: unknown, fb: string[]) {
+  return Array.isArray(v) ? (v as string[]) : fb;
 }
 
-function mapProfile(row: DbRow): ProfileData {
+// ─── Row mappers ──────────────────────────────────────────────
+
+function mapProfile(row: Row): ProfileData {
   return {
-    name:            str(row.name,             staticProfile.name),
-    firstName:       str(row.first_name,       staticProfile.firstName),
-    lastName:        str(row.last_name,        staticProfile.lastName),
-    initials:        str(row.initials,         staticProfile.initials),
-    title:           str(row.title,            staticProfile.title),
-    titles:          strArr(row.titles,        staticProfile.titles),
-    tagline:         str(row.tagline,          staticProfile.tagline),
-    email:           str(row.email,            staticProfile.email),
-    phone:           str(row.phone,            staticProfile.phone),
-    phoneDisplay:    str(row.phone_display,    staticProfile.phoneDisplay),
-    phoneHint:       str(row.phone_hint,       staticProfile.phoneHint),
-    location:        str(row.location,         staticProfile.location),
-    locationShort:   str(row.location_short,   staticProfile.locationShort),
-    locationHint:    str(row.location_hint,    staticProfile.locationHint),
-    github:          str(row.github,           staticProfile.github),
-    githubDisplay:   str(row.github_display,   staticProfile.githubDisplay),
-    linkedin:        str(row.linkedin,         staticProfile.linkedin),
-    linkedinDisplay: str(row.linkedin_display, staticProfile.linkedinDisplay),
-    available:       bool(row.available,       staticProfile.available),
-    availableText:   str(row.available_text,   staticProfile.availableText),
-    statusText:      str(row.status_text,      staticProfile.statusText),
-    statusHint:      str(row.status_hint,      staticProfile.statusHint),
-    hireMeHeading:   str(row.hire_me_heading,  staticProfile.hireMeHeading),
-    hireMeSubtext:   str(row.hire_me_subtext,  staticProfile.hireMeSubtext),
-    ctaHeading:      str(row.cta_heading,      staticProfile.ctaHeading),
-    ctaSubtext:      str(row.cta_subtext,      staticProfile.ctaSubtext),
-    contactHeading:  str(row.contact_heading,  staticProfile.contactHeading),
-    contactSubtext:  str(row.contact_subtext,  staticProfile.contactSubtext),
-    siteTitle:       str(row.site_title,       staticProfile.siteTitle),
-    siteDescription: str(row.site_description, staticProfile.siteDescription),
-    languages:       strArr(row.languages,     staticProfile.languages),
+    name:            s(row.name,             staticProfile.name),
+    firstName:       s(row.first_name,       staticProfile.firstName),
+    lastName:        s(row.last_name,        staticProfile.lastName),
+    initials:        s(row.initials,         staticProfile.initials),
+    title:           s(row.title,            staticProfile.title),
+    titles:          sa(row.titles,          staticProfile.titles),
+    tagline:         s(row.tagline,          staticProfile.tagline),
+    email:           s(row.email,            staticProfile.email),
+    phone:           s(row.phone,            staticProfile.phone),
+    phoneDisplay:    s(row.phone_display,    staticProfile.phoneDisplay),
+    phoneHint:       s(row.phone_hint,       staticProfile.phoneHint),
+    location:        s(row.location,         staticProfile.location),
+    locationShort:   s(row.location_short,   staticProfile.locationShort),
+    locationHint:    s(row.location_hint,    staticProfile.locationHint),
+    github:          s(row.github,           staticProfile.github),
+    githubDisplay:   s(row.github_display,   staticProfile.githubDisplay),
+    linkedin:        s(row.linkedin,         staticProfile.linkedin),
+    linkedinDisplay: s(row.linkedin_display, staticProfile.linkedinDisplay),
+    available:       b(row.available,        staticProfile.available),
+    availableText:   s(row.available_text,   staticProfile.availableText),
+    statusText:      s(row.status_text,      staticProfile.statusText),
+    statusHint:      s(row.status_hint,      staticProfile.statusHint),
+    hireMeHeading:   s(row.hire_me_heading,  staticProfile.hireMeHeading),
+    hireMeSubtext:   s(row.hire_me_subtext,  staticProfile.hireMeSubtext),
+    ctaHeading:      s(row.cta_heading,      staticProfile.ctaHeading),
+    ctaSubtext:      s(row.cta_subtext,      staticProfile.ctaSubtext),
+    contactHeading:  s(row.contact_heading,  staticProfile.contactHeading),
+    contactSubtext:  s(row.contact_subtext,  staticProfile.contactSubtext),
+    siteTitle:       s(row.site_title,       staticProfile.siteTitle),
+    siteDescription: s(row.site_description, staticProfile.siteDescription),
+    languages:       sa(row.languages,       staticProfile.languages),
   };
 }
 
-function mapEducation(row: DbRow): EducationData {
+function mapEducation(row: Row): EducationData {
   return {
-    school: str(row.edu_school, staticEducation.school),
-    degree: str(row.edu_degree, staticEducation.degree),
-    major:  str(row.edu_major,  staticEducation.major),
-    years:  str(row.edu_years,  staticEducation.years),
-    badge:  str(row.edu_badge,  staticEducation.badge),
+    school: s(row.edu_school, staticEducation.school),
+    degree: s(row.edu_degree, staticEducation.degree),
+    major:  s(row.edu_major,  staticEducation.major),
+    years:  s(row.edu_years,  staticEducation.years),
+    badge:  s(row.edu_badge,  staticEducation.badge),
   };
 }
 
-function mapExperience(row: DbRow): ExperienceData {
+function mapExperience(row: Row): ExperienceData {
   return {
-    id:         str(row.id,       ""),
-    slug:       str(row.slug,     ""),
-    role:       str(row.role,     ""),
-    company:    str(row.company,  ""),
-    period:     str(row.period,   ""),
-    location:   str(row.location, ""),
-    status:     str(row.status,   "past"),
-    color:      str(row.color,    "#d1675a"),
-    summary:    str(row.summary,  ""),
-    highlights: strArr(row.highlights, []),
-    stack:      strArr(row.stack,      []),
+    id:         s(row.id,       ""),
+    slug:       s(row.slug,     ""),
+    role:       s(row.role,     ""),
+    company:    s(row.company,  ""),
+    period:     s(row.period,   ""),
+    location:   s(row.location, ""),
+    status:     s(row.status,   "past"),
+    color:      s(row.color,    "#d1675a"),
+    summary:    s(row.summary,  ""),
+    highlights: sa(row.highlights, []),
+    stack:      sa(row.stack,      []),
   };
 }
 
-function mapProject(row: DbRow): ProjectData {
+function mapProject(row: Row): ProjectData {
   return {
-    id:          str(row.id,          ""),
-    slug:        str(row.slug,        ""),
-    title:       str(row.title,       ""),
-    url:         str(row.url,         ""),
-    description: str(row.description, ""),
-    role:        str(row.role,        ""),
-    tags:        strArr(row.tags,     []),
-    color:       str(row.color,       "#d1675a"),
-    featured:    bool(row.featured,   false),
+    id:          s(row.id,          ""),
+    slug:        s(row.slug,        ""),
+    title:       s(row.title,       ""),
+    url:         s(row.url,         ""),
+    description: s(row.description, ""),
+    role:        s(row.role,        ""),
+    tags:        sa(row.tags,       []),
+    color:       s(row.color,       "#d1675a"),
+    featured:    b(row.featured,    false),
   };
 }
 
-function mapSkillGroup(row: DbRow): SkillGroupData {
-  const rawSkills = Array.isArray(row.skills) ? (row.skills as DbRow[]) : [];
+function mapSkillGroup(row: Row): SkillGroupData {
+  const rawSkills = Array.isArray(row.skills) ? (row.skills as Row[]) : [];
   return {
-    id:    str(row.id,          ""),
-    label: str(row.label,       ""),
-    color: str(row.color,       "#398eb2"),
-    icon:  str(row.icon,        "Monitor"),
-    desc:  str(row.description, ""),
-    skills: rawSkills.map(s => ({
-      label: str(s.label,   ""),
-      level: num(s.level,   1),
-      where: strArr(s.used_in, []),
+    id:    s(row.id,          ""),
+    label: s(row.label,       ""),
+    color: s(row.color,       "#398eb2"),
+    icon:  s(row.icon,        "Monitor"),
+    desc:  s(row.description, ""),
+    skills: rawSkills.map(sk => ({
+      label: s(sk.label,   ""),
+      level: n(sk.level,   1),
+      where: sa(sk.used_in, []),
     })),
   };
 }
 
-// ─── Main fetch function ───────────────────────────────────────
-
-export async function getPortfolioData(): Promise<PortfolioData> {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  // If env vars are missing, return static config immediately
-  if (!supabaseUrl || !supabaseKey) {
-    return getStaticData();
-  }
-
-  try {
-    const headers = {
-      apikey:        supabaseKey,
-      Authorization: "Bearer " + supabaseKey,
-      "Content-Type": "application/json",
-    };
-    const base = supabaseUrl + "/rest/v1";
-
-    const [profileRes, experiencesRes, projectsRes, skillGroupsRes] =
-      await Promise.all([
-        fetch(base + "/profile?id=eq.1&limit=1", { headers, cache: "no-store" }),
-        fetch(base + "/experiences?order=sort_order.asc", { headers, cache: "no-store" }),
-        fetch(base + "/projects?order=sort_order.asc", { headers, cache: "no-store" }),
-        fetch(base + "/skill_groups?order=sort_order.asc&select=*,skills(*)", { headers, cache: "no-store" }),
-      ]);
-
-    if (!profileRes.ok || !experiencesRes.ok || !projectsRes.ok || !skillGroupsRes.ok) {
-      console.warn("[data] Supabase fetch failed, falling back to static config");
-      return getStaticData();
-    }
-
-    const [profileRows, experienceRows, projectRows, skillGroupRows] =
-      await Promise.all([
-        profileRes.json(),
-        experiencesRes.json(),
-        projectsRes.json(),
-        skillGroupsRes.json(),
-      ]);
-
-    const profileRow = Array.isArray(profileRows) ? profileRows[0] : profileRows;
-
-    return {
-      profile:     mapProfile(profileRow ?? {}),
-      education:   mapEducation(profileRow ?? {}),
-      experiences: Array.isArray(experienceRows) ? experienceRows.map(mapExperience) : staticExperiences,
-      projects:    Array.isArray(projectRows)    ? projectRows.map(mapProject)    : staticProjects,
-      skills:      staticSkills, // sidebar badges still from config
-      skillGroups: Array.isArray(skillGroupRows) ? skillGroupRows.map(mapSkillGroup) : staticSkillGroups,
-    };
-  } catch (err) {
-    console.warn("[data] Supabase error, using static config:", err);
-    return getStaticData();
-  }
-}
+// ─── Static fallback ──────────────────────────────────────────
 
 function getStaticData(): PortfolioData {
   return {
@@ -249,4 +186,56 @@ function getStaticData(): PortfolioData {
     skills:      staticSkills,
     skillGroups: staticSkillGroups as unknown as SkillGroupData[],
   };
+}
+
+// ─── Main fetch ───────────────────────────────────────────────
+
+export async function getPortfolioData(): Promise<PortfolioData> {
+  const supabaseUrl    = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey    = process.env.SUPABASE_SERVICE_ROLE_KEY   // prefer service key server-side
+                      ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.warn("[data] Supabase env vars not set — using static config");
+    return getStaticData();
+  }
+
+  try {
+    const db = createClient(supabaseUrl, supabaseKey, {
+      auth: { persistSession: false },
+    });
+
+    const [
+      { data: profileRows,    error: pErr },
+      { data: expRows,        error: eErr },
+      { data: projRows,       error: prErr },
+      { data: groupRows,      error: gErr },
+    ] = await Promise.all([
+      db.from("profile").select("*").eq("id", 1).limit(1),
+      db.from("experiences").select("*").order("sort_order", { ascending: true }),
+      db.from("projects").select("*").order("sort_order", { ascending: true }),
+      db.from("skill_groups").select("*, skills(*)").order("sort_order", { ascending: true }),
+    ]);
+
+    if (pErr || eErr || prErr || gErr) {
+      console.warn("[data] Supabase query error:", pErr ?? eErr ?? prErr ?? gErr);
+      return getStaticData();
+    }
+
+    const profileRow = Array.isArray(profileRows) && profileRows.length > 0
+      ? (profileRows[0] as Row)
+      : ({} as Row);
+
+    return {
+      profile:     mapProfile(profileRow),
+      education:   mapEducation(profileRow),
+      experiences: Array.isArray(expRows)   ? expRows.map(r => mapExperience(r as Row))   : staticExperiences,
+      projects:    Array.isArray(projRows)  ? projRows.map(r => mapProject(r as Row))     : staticProjects,
+      skills:      staticSkills,
+      skillGroups: Array.isArray(groupRows) ? groupRows.map(r => mapSkillGroup(r as Row)) : (staticSkillGroups as unknown as SkillGroupData[]),
+    };
+  } catch (err) {
+    console.warn("[data] Unexpected error, using static config:", err);
+    return getStaticData();
+  }
 }
