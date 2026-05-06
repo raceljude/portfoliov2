@@ -100,7 +100,18 @@ export default function AdminProjects() {
   const save = async (form: Partial<Project>) => {
     const method = form.id ? "PATCH" : "POST";
     const url    = form.id ? "/api/admin/projects/" + form.id : "/api/admin/projects";
-    await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+    const { id: _id, sort_order: _so, ...rest } = form as Project;
+    const payload = method === "POST" ? rest : form;
+    const res = await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      alert("Save failed: " + (err.error ?? res.statusText));
+      return;
+    }
     setEditing(null);
     load();
   };

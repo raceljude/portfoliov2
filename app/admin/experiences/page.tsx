@@ -105,7 +105,19 @@ export default function AdminExperiences() {
   const save = async (form: Partial<Exp>) => {
     const method = form.id ? "PATCH" : "POST";
     const url    = form.id ? "/api/admin/experiences/" + form.id : "/api/admin/experiences";
-    await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+    // Strip client-only fields before sending
+    const { id: _id, sort_order: _so, ...rest } = form as Exp;
+    const payload = method === "POST" ? rest : form;
+    const res = await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      alert("Save failed: " + (err.error ?? res.statusText));
+      return;
+    }
     setEditing(null);
     load();
   };
