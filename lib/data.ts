@@ -77,99 +77,109 @@ export interface PortfolioData {
 
 // ─── Supabase row → domain type mappers ───────────────────────
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mapProfile(row: Record<string, any>): ProfileData {
+type DbRow = Record<string, unknown>;
+
+function str(v: unknown, fallback: string): string {
+  return typeof v === "string" ? v : fallback;
+}
+function bool(v: unknown, fallback: boolean): boolean {
+  return typeof v === "boolean" ? v : fallback;
+}
+function strArr(v: unknown, fallback: string[]): string[] {
+  return Array.isArray(v) ? (v as string[]) : fallback;
+}
+function num(v: unknown, fallback: number): number {
+  return typeof v === "number" ? v : fallback;
+}
+
+function mapProfile(row: DbRow): ProfileData {
   return {
-    name:            row.name            ?? staticProfile.name,
-    firstName:       row.first_name      ?? staticProfile.firstName,
-    lastName:        row.last_name       ?? staticProfile.lastName,
-    initials:        row.initials        ?? staticProfile.initials,
-    title:           row.title           ?? staticProfile.title,
-    titles:          row.titles          ?? staticProfile.titles,
-    tagline:         row.tagline         ?? staticProfile.tagline,
-    email:           row.email           ?? staticProfile.email,
-    phone:           row.phone           ?? staticProfile.phone,
-    phoneDisplay:    row.phone_display   ?? staticProfile.phoneDisplay,
-    phoneHint:       row.phone_hint      ?? staticProfile.phoneHint,
-    location:        row.location        ?? staticProfile.location,
-    locationShort:   row.location_short  ?? staticProfile.locationShort,
-    locationHint:    row.location_hint   ?? staticProfile.locationHint,
-    github:          row.github          ?? staticProfile.github,
-    githubDisplay:   row.github_display  ?? staticProfile.githubDisplay,
-    linkedin:        row.linkedin        ?? staticProfile.linkedin,
-    linkedinDisplay: row.linkedin_display ?? staticProfile.linkedinDisplay,
-    available:       row.available       ?? staticProfile.available,
-    availableText:   row.available_text  ?? staticProfile.availableText,
-    statusText:      row.status_text     ?? staticProfile.statusText,
-    statusHint:      row.status_hint     ?? staticProfile.statusHint,
-    hireMeHeading:   row.hire_me_heading ?? staticProfile.hireMeHeading,
-    hireMeSubtext:   row.hire_me_subtext ?? staticProfile.hireMeSubtext,
-    ctaHeading:      row.cta_heading     ?? staticProfile.ctaHeading,
-    ctaSubtext:      row.cta_subtext     ?? staticProfile.ctaSubtext,
-    contactHeading:  row.contact_heading ?? staticProfile.contactHeading,
-    contactSubtext:  row.contact_subtext ?? staticProfile.contactSubtext,
-    siteTitle:       row.site_title      ?? staticProfile.siteTitle,
-    siteDescription: row.site_description ?? staticProfile.siteDescription,
-    languages:       row.languages       ?? staticProfile.languages,
+    name:            str(row.name,             staticProfile.name),
+    firstName:       str(row.first_name,       staticProfile.firstName),
+    lastName:        str(row.last_name,        staticProfile.lastName),
+    initials:        str(row.initials,         staticProfile.initials),
+    title:           str(row.title,            staticProfile.title),
+    titles:          strArr(row.titles,        staticProfile.titles),
+    tagline:         str(row.tagline,          staticProfile.tagline),
+    email:           str(row.email,            staticProfile.email),
+    phone:           str(row.phone,            staticProfile.phone),
+    phoneDisplay:    str(row.phone_display,    staticProfile.phoneDisplay),
+    phoneHint:       str(row.phone_hint,       staticProfile.phoneHint),
+    location:        str(row.location,         staticProfile.location),
+    locationShort:   str(row.location_short,   staticProfile.locationShort),
+    locationHint:    str(row.location_hint,    staticProfile.locationHint),
+    github:          str(row.github,           staticProfile.github),
+    githubDisplay:   str(row.github_display,   staticProfile.githubDisplay),
+    linkedin:        str(row.linkedin,         staticProfile.linkedin),
+    linkedinDisplay: str(row.linkedin_display, staticProfile.linkedinDisplay),
+    available:       bool(row.available,       staticProfile.available),
+    availableText:   str(row.available_text,   staticProfile.availableText),
+    statusText:      str(row.status_text,      staticProfile.statusText),
+    statusHint:      str(row.status_hint,      staticProfile.statusHint),
+    hireMeHeading:   str(row.hire_me_heading,  staticProfile.hireMeHeading),
+    hireMeSubtext:   str(row.hire_me_subtext,  staticProfile.hireMeSubtext),
+    ctaHeading:      str(row.cta_heading,      staticProfile.ctaHeading),
+    ctaSubtext:      str(row.cta_subtext,      staticProfile.ctaSubtext),
+    contactHeading:  str(row.contact_heading,  staticProfile.contactHeading),
+    contactSubtext:  str(row.contact_subtext,  staticProfile.contactSubtext),
+    siteTitle:       str(row.site_title,       staticProfile.siteTitle),
+    siteDescription: str(row.site_description, staticProfile.siteDescription),
+    languages:       strArr(row.languages,     staticProfile.languages),
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mapEducation(row: Record<string, any>): EducationData {
+function mapEducation(row: DbRow): EducationData {
   return {
-    school: row.edu_school ?? staticEducation.school,
-    degree: row.edu_degree ?? staticEducation.degree,
-    major:  row.edu_major  ?? staticEducation.major,
-    years:  row.edu_years  ?? staticEducation.years,
-    badge:  row.edu_badge  ?? staticEducation.badge,
+    school: str(row.edu_school, staticEducation.school),
+    degree: str(row.edu_degree, staticEducation.degree),
+    major:  str(row.edu_major,  staticEducation.major),
+    years:  str(row.edu_years,  staticEducation.years),
+    badge:  str(row.edu_badge,  staticEducation.badge),
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mapExperience(row: Record<string, any>): ExperienceData {
+function mapExperience(row: DbRow): ExperienceData {
   return {
-    id:         row.id,
-    slug:       row.slug,
-    role:       row.role,
-    company:    row.company,
-    period:     row.period,
-    location:   row.location,
-    status:     row.status,
-    color:      row.color,
-    summary:    row.summary,
-    highlights: row.highlights ?? [],
-    stack:      row.stack ?? [],
+    id:         str(row.id,       ""),
+    slug:       str(row.slug,     ""),
+    role:       str(row.role,     ""),
+    company:    str(row.company,  ""),
+    period:     str(row.period,   ""),
+    location:   str(row.location, ""),
+    status:     str(row.status,   "past"),
+    color:      str(row.color,    "#d1675a"),
+    summary:    str(row.summary,  ""),
+    highlights: strArr(row.highlights, []),
+    stack:      strArr(row.stack,      []),
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mapProject(row: Record<string, any>): ProjectData {
+function mapProject(row: DbRow): ProjectData {
   return {
-    id:          row.id,
-    slug:        row.slug,
-    title:       row.title,
-    url:         row.url,
-    description: row.description,
-    role:        row.role,
-    tags:        row.tags ?? [],
-    color:       row.color,
-    featured:    row.featured ?? false,
+    id:          str(row.id,          ""),
+    slug:        str(row.slug,        ""),
+    title:       str(row.title,       ""),
+    url:         str(row.url,         ""),
+    description: str(row.description, ""),
+    role:        str(row.role,        ""),
+    tags:        strArr(row.tags,     []),
+    color:       str(row.color,       "#d1675a"),
+    featured:    bool(row.featured,   false),
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mapSkillGroup(row: Record<string, any>): SkillGroupData {
+function mapSkillGroup(row: DbRow): SkillGroupData {
+  const rawSkills = Array.isArray(row.skills) ? (row.skills as DbRow[]) : [];
   return {
-    id:    row.id,
-    label: row.label,
-    color: row.color,
-    icon:  row.icon,
-    desc:  row.description ?? "",
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    skills: (row.skills ?? []).map((s: Record<string, any>) => ({
-      label: s.label,
-      level: s.level,
-      where: s.used_in ?? [],
+    id:    str(row.id,          ""),
+    label: str(row.label,       ""),
+    color: str(row.color,       "#398eb2"),
+    icon:  str(row.icon,        "Monitor"),
+    desc:  str(row.description, ""),
+    skills: rawSkills.map(s => ({
+      label: str(s.label,   ""),
+      level: num(s.level,   1),
+      where: strArr(s.used_in, []),
     })),
   };
 }
