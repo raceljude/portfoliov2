@@ -25,20 +25,26 @@ function Modal({ proj, onClose, onSave }: { proj: Partial<Project>; onClose: () 
   const set = (k: keyof Project, v: unknown) => setForm(f => ({ ...f, [k]: v }));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
       style={{ background: "rgba(0,0,0,0.85)" }}>
-      <div className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-2xl"
+      <div className="w-full sm:max-w-xl max-h-[92vh] sm:max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl"
         style={{ background: "#111827", border: "1px solid #1e2a3a" }}>
         <div className="h-[3px]" style={{ background: "linear-gradient(90deg,#398eb2,transparent)" }} />
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="font-bold text-lg" style={{ color: "#f0ece8" }}>
+
+        {/* Mobile drag handle */}
+        <div className="flex justify-center pt-2 sm:hidden">
+          <div className="w-8 h-1 rounded-full" style={{ background: "#2a4a60" }} />
+        </div>
+
+        <div className="p-4 sm:p-6">
+          <div className="flex items-center justify-between mb-4 sm:mb-5">
+            <h2 className="font-bold text-base sm:text-lg" style={{ color: "#f0ece8" }}>
               {form.id ? "Edit Project" : "New Project"}
             </h2>
             <button onClick={onClose} style={{ color: "#4a6a80" }}><X size={16} /></button>
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3 sm:gap-4">
             {([["slug","Slug (unique ID)"],["title","Title"],["url","URL"],["color","Accent Color"]] as [keyof Project,string][]).map(([k,l]) => (
               <div key={k}>
                 <label className="block text-xs font-mono uppercase tracking-widest mb-1" style={{ color: "#4a6a80" }}>{l}</label>
@@ -69,7 +75,7 @@ function Modal({ proj, onClose, onSave }: { proj: Partial<Project>; onClose: () 
             </label>
           </div>
 
-          <div className="flex justify-end gap-2 mt-6">
+          <div className="flex justify-end gap-2 mt-5 sm:mt-6">
             <button onClick={onClose} className="px-4 py-2 rounded-xl text-xs font-mono"
               style={{ background: "#0e1e2c", border: "1px solid #1e2a3a", color: "#4a6a80" }}>Cancel</button>
             <button onClick={() => onSave(form)} className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono"
@@ -117,6 +123,7 @@ export default function AdminProjects() {
   };
 
   const del = async (id: string) => {
+    if (!confirm("Delete this project?")) return;
     setDeleting(id);
     await fetch("/api/admin/projects/" + id, { method: "DELETE" });
     setDeleting(null);
@@ -124,33 +131,39 @@ export default function AdminProjects() {
   };
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className="p-4 sm:p-8">
+      <div className="flex items-center justify-between mb-6 sm:mb-8">
         <div>
           <p className="text-xs font-mono uppercase tracking-widest mb-1" style={{ color: "#4a6a80" }}>Admin</p>
-          <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-display)", color: "#f0ece8" }}>Projects</h1>
+          <h1 className="text-xl sm:text-2xl font-bold" style={{ fontFamily: "var(--font-display)", color: "#f0ece8" }}>Projects</h1>
         </div>
         <button onClick={() => setEditing(EMPTY)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono"
+          className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-mono"
           style={{ background: "#398eb2", color: "#fff" }}>
-          <Plus size={14} /> Add Project
+          <Plus size={14} />
+          <span className="hidden sm:inline">Add Project</span>
+          <span className="sm:hidden">Add</span>
         </button>
       </div>
 
       {loading ? (
         <div className="flex items-center gap-2" style={{ color: "#4a6a80" }}><Loader2 size={16} className="animate-spin" /> Loading...</div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="flex flex-col sm:grid sm:grid-cols-2 gap-3">
           {items.map(proj => (
-            <div key={proj.id} className="rounded-xl p-5" style={{ background: "#111827", border: "1px solid #1e2a3a" }}>
+            <div key={proj.id} className="rounded-xl p-4 sm:p-5" style={{ background: "#111827", border: "1px solid #1e2a3a" }}>
               <div className="flex items-start justify-between gap-3 mb-2">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
                   <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: proj.color }} />
-                  <span className="font-semibold text-sm" style={{ color: "#f0ece8" }}>{proj.title}</span>
-                  {proj.featured && <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full" style={{ color: "#ffbf6b", background: "#ffbf6b18", border: "1px solid #ffbf6b35" }}>Featured</span>}
+                  <span className="font-semibold text-sm truncate" style={{ color: "#f0ece8" }}>{proj.title}</span>
+                  {proj.featured && (
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full shrink-0"
+                      style={{ color: "#ffbf6b", background: "#ffbf6b18", border: "1px solid #ffbf6b35" }}>Featured</span>
+                  )}
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <a href={proj.url} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg"
+                <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                  <a href={proj.url} target="_blank" rel="noopener noreferrer"
+                    className="p-1.5 rounded-lg"
                     style={{ background: "#0e1e2c", border: "1px solid #1e2a3a", color: "#4a6a80" }}>
                     <ExternalLink size={12} />
                   </a>
@@ -174,7 +187,7 @@ export default function AdminProjects() {
             </div>
           ))}
           {items.length === 0 && (
-            <p className="text-sm font-mono col-span-2" style={{ color: "#2a4a60" }}>No projects yet.</p>
+            <p className="text-sm font-mono sm:col-span-2" style={{ color: "#2a4a60" }}>No projects yet.</p>
           )}
         </div>
       )}

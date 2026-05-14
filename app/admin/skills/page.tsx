@@ -12,16 +12,26 @@ const inp = {
   color: "#f0ece8", fontSize: "13px", outline: "none",
 };
 
-const ICONS = ["Monitor","Server","GitBranch","Cloud","Wrench","Code2","Database","Globe"];
-
-function SkillModal({ skill, groupId, onClose, onSave }: { skill: Partial<Skill>; groupId: string; onClose: () => void; onSave: (d: Partial<Skill>) => void }) {
+function SkillModal({ skill, groupId, onClose, onSave }: {
+  skill: Partial<Skill>; groupId: string;
+  onClose: () => void;
+  onSave: (d: Partial<Skill>) => void;
+}) {
   const [form, setForm] = useState<Partial<Skill>>(skill);
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(0,0,0,0.85)" }}>
-      <div className="w-full max-w-md rounded-2xl" style={{ background: "#111827", border: "1px solid #1e2a3a" }}>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+      style={{ background: "rgba(0,0,0,0.85)" }}>
+      <div className="w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl"
+        style={{ background: "#111827", border: "1px solid #1e2a3a" }}>
         <div className="h-[3px]" style={{ background: "linear-gradient(90deg,#ffbf6b,transparent)" }} />
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-5">
+
+        {/* Mobile drag handle */}
+        <div className="flex justify-center pt-2 sm:hidden">
+          <div className="w-8 h-1 rounded-full" style={{ background: "#2a4a60" }} />
+        </div>
+
+        <div className="p-4 sm:p-6">
+          <div className="flex items-center justify-between mb-4 sm:mb-5">
             <h2 className="font-bold" style={{ color: "#f0ece8" }}>{form.id ? "Edit Skill" : "New Skill"}</h2>
             <button onClick={onClose} style={{ color: "#4a6a80" }}><X size={16} /></button>
           </div>
@@ -35,8 +45,12 @@ function SkillModal({ skill, groupId, onClose, onSave }: { skill: Partial<Skill>
               <div className="flex gap-2">
                 {[1,2,3,4,5].map(n => (
                   <button key={n} onClick={() => setForm(f => ({ ...f, level: n }))}
-                    className="w-9 h-9 rounded-lg text-sm font-bold focus:outline-none"
-                    style={{ background: (form.level ?? 0) >= n ? "#ffbf6b" : "#0e1e2c", color: (form.level ?? 0) >= n ? "#111827" : "#4a6a80", border: "1px solid #1e2a3a" }}>
+                    className="flex-1 h-10 rounded-lg text-sm font-bold focus:outline-none"
+                    style={{
+                      background: (form.level ?? 0) >= n ? "#ffbf6b" : "#0e1e2c",
+                      color: (form.level ?? 0) >= n ? "#111827" : "#4a6a80",
+                      border: "1px solid #1e2a3a",
+                    }}>
                     {n}
                   </button>
                 ))}
@@ -49,7 +63,7 @@ function SkillModal({ skill, groupId, onClose, onSave }: { skill: Partial<Skill>
                 onChange={e => setForm(f => ({ ...f, used_in: e.target.value.split("\n").filter(Boolean) }))} />
             </div>
           </div>
-          <div className="flex justify-end gap-2 mt-6">
+          <div className="flex justify-end gap-2 mt-5 sm:mt-6">
             <button onClick={onClose} className="px-4 py-2 rounded-xl text-xs font-mono"
               style={{ background: "#0e1e2c", border: "1px solid #1e2a3a", color: "#4a6a80" }}>Cancel</button>
             <button onClick={() => onSave(form)} className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono"
@@ -97,69 +111,79 @@ export default function AdminSkills() {
   };
 
   const delSkill = async (id: string) => {
+    if (!confirm("Delete this skill?")) return;
     await fetch("/api/admin/skills/" + id + "?type=skill", { method: "DELETE" });
     load();
   };
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className="p-4 sm:p-8">
+      <div className="flex items-center justify-between mb-6 sm:mb-8">
         <div>
           <p className="text-xs font-mono uppercase tracking-widest mb-1" style={{ color: "#4a6a80" }}>Admin</p>
-          <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-display)", color: "#f0ece8" }}>Skills</h1>
+          <h1 className="text-xl sm:text-2xl font-bold" style={{ fontFamily: "var(--font-display)", color: "#f0ece8" }}>Skills</h1>
         </div>
       </div>
 
       {loading ? (
         <div className="flex items-center gap-2" style={{ color: "#4a6a80" }}><Loader2 size={16} className="animate-spin" /> Loading...</div>
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3 sm:gap-4">
           {groups.map(group => (
             <div key={group.id} className="rounded-xl overflow-hidden" style={{ background: "#111827", border: "1px solid #1e2a3a" }}>
               {/* Group header */}
-              <button className="w-full flex items-center justify-between p-5 focus:outline-none"
-                onClick={() => setExpanded(expanded === group.id ? null : group.id)}>
-                <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 rounded-full" style={{ background: group.color }} />
-                  <span className="font-semibold text-sm" style={{ color: "#f0ece8" }}>{group.label}</span>
-                  <span className="text-xs font-mono px-2 py-0.5 rounded"
+              <button
+                className="w-full flex items-center justify-between p-4 sm:p-5 focus:outline-none"
+                onClick={() => setExpanded(expanded === group.id ? null : group.id)}
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-3 h-3 rounded-full shrink-0" style={{ background: group.color }} />
+                  <span className="font-semibold text-sm truncate" style={{ color: "#f0ece8" }}>{group.label}</span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded shrink-0"
                     style={{ background: "#0e1e2c", border: "1px solid #1e2a3a", color: "#4a6a80" }}>
-                    {group.skills?.length ?? 0} skills
+                    {group.skills?.length ?? 0}
                   </span>
                 </div>
-                {expanded === group.id ? <ChevronDown size={16} style={{ color: "#4a6a80" }} /> : <ChevronRight size={16} style={{ color: "#4a6a80" }} />}
+                {expanded === group.id
+                  ? <ChevronDown size={16} style={{ color: "#4a6a80", flexShrink: 0 }} />
+                  : <ChevronRight size={16} style={{ color: "#4a6a80", flexShrink: 0 }} />
+                }
               </button>
 
               {/* Skills list */}
               {expanded === group.id && (
                 <div style={{ borderTop: "1px solid #1e2a3a" }}>
-                  <div className="p-4 flex flex-col gap-2">
+                  <div className="p-3 sm:p-4 flex flex-col gap-2">
                     {(group.skills ?? []).map(skill => (
-                      <div key={skill.id} className="flex items-center justify-between p-3 rounded-xl"
+                      <div key={skill.id}
+                        className="flex items-center justify-between p-3 rounded-xl gap-3"
                         style={{ background: "#0e1e2c", border: "1px solid #1e2a3a" }}>
-                        <div className="flex items-center gap-3">
-                          <span className="text-sm" style={{ color: "#f0ece8" }}>{skill.label}</span>
-                          <div className="flex gap-0.5">
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                          <span className="text-sm truncate" style={{ color: "#f0ece8" }}>{skill.label}</span>
+                          <div className="flex gap-0.5 shrink-0">
                             {[1,2,3,4,5].map(n => (
                               <div key={n} className="w-1.5 h-1.5 rounded-full"
                                 style={{ background: n <= skill.level ? group.color : "#1e2a3a" }} />
                             ))}
                           </div>
                         </div>
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
                           <button onClick={() => setSkillEdit({ skill, groupId: group.id })}
-                            className="p-1.5 rounded-lg" style={{ background: "#111827", border: "1px solid #1e2a3a", color: "#4a6a80" }}>
+                            className="p-1.5 rounded-lg"
+                            style={{ background: "#111827", border: "1px solid #1e2a3a", color: "#4a6a80" }}>
                             <Pencil size={11} />
                           </button>
                           <button onClick={() => delSkill(skill.id)}
-                            className="p-1.5 rounded-lg" style={{ background: "#111827", border: "1px solid #1e2a3a", color: "#d1675a" }}>
+                            className="p-1.5 rounded-lg"
+                            style={{ background: "#111827", border: "1px solid #1e2a3a", color: "#d1675a" }}>
                             <Trash2 size={11} />
                           </button>
                         </div>
                       </div>
                     ))}
-                    <button onClick={() => setSkillEdit({ skill: { label: "", level: 3, used_in: [] }, groupId: group.id })}
-                      className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-mono mt-1 focus:outline-none"
+                    <button
+                      onClick={() => setSkillEdit({ skill: { label: "", level: 3, used_in: [] }, groupId: group.id })}
+                      className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-mono mt-1 focus:outline-none w-full"
                       style={{ border: "1px dashed #1e2a3a", color: "#2a4a60" }}>
                       <Plus size={12} /> Add skill to {group.label}
                     </button>

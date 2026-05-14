@@ -41,8 +41,6 @@ const TEXT_FIELDS = [
   { key: "edu_badge",        label: "Education Badge" },
 ];
 
-// Array fields use a separate draft state so newlines are preserved while typing.
-// The filter(Boolean) only runs at save time.
 const ARRAY_FIELDS = [
   { key: "titles",    label: "Rotating Job Titles" },
   { key: "languages", label: "Languages" },
@@ -83,7 +81,6 @@ export default function AdminProfile() {
     if (res.ok) {
       const row = await res.json();
       setData(row);
-      // Initialise textarea drafts from DB values
       const draft: Record<string, string> = {};
       for (const f of ARRAY_FIELDS) {
         draft[f.key] = ((row[f.key] as string[]) ?? []).join("\n");
@@ -102,20 +99,16 @@ export default function AdminProfile() {
     if (!data) return;
     setSaving(true);
     setMsg("");
-
-    // Merge array drafts back — filter blank lines only at save time
     const payload: ProfileRow = { ...data };
     for (const f of ARRAY_FIELDS) {
       const raw = arrayDraft[f.key] ?? "";
       payload[f.key] = raw.split("\n").map(l => l.trim()).filter(Boolean);
     }
-
     const res = await fetch("/api/admin/profile", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-
     setSaving(false);
     if (res.ok) {
       setMsg("Saved!");
@@ -127,22 +120,22 @@ export default function AdminProfile() {
   };
 
   if (loading) return (
-    <div className="p-8 flex items-center gap-2" style={{ color: "#4a6a80" }}>
+    <div className="p-4 sm:p-8 flex items-center gap-2" style={{ color: "#4a6a80" }}>
       <Loader2 size={16} className="animate-spin" /> Loading...
     </div>
   );
 
   return (
-    <div className="p-8 max-w-3xl">
+    <div className="p-4 sm:p-8 max-w-3xl">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-start sm:items-center justify-between gap-3 mb-6 sm:mb-8">
         <div>
           <p className="text-xs font-mono uppercase tracking-widest mb-1" style={{ color: "#4a6a80" }}>Admin</p>
-          <h1 className="text-2xl font-bold" style={{ fontFamily: "var(--font-display)", color: "#f0ece8" }}>Profile</h1>
+          <h1 className="text-xl sm:text-2xl font-bold" style={{ fontFamily: "var(--font-display)", color: "#f0ece8" }}>Profile</h1>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           {msg && (
-            <span className="text-xs font-mono" style={{ color: msg === "Saved!" ? "#4a9a6a" : "#d1675a" }}>
+            <span className="text-xs font-mono hidden sm:inline" style={{ color: msg === "Saved!" ? "#4a9a6a" : "#d1675a" }}>
               {msg}
             </span>
           )}
@@ -152,17 +145,24 @@ export default function AdminProfile() {
             <RefreshCw size={14} />
           </button>
           <button onClick={save} disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono focus:outline-none"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-mono focus:outline-none"
             style={{ background: "#d1675a", color: "#fff" }}>
             {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
-            {saving ? "Saving..." : "Save changes"}
+            <span className="hidden sm:inline">{saving ? "Saving..." : "Save changes"}</span>
+            <span className="sm:hidden">{saving ? "..." : "Save"}</span>
           </button>
         </div>
       </div>
 
-      <div className="flex flex-col gap-5">
+      {/* Mobile save message */}
+      {msg && (
+        <div className="sm:hidden mb-4 text-xs font-mono px-3 py-2 rounded-lg"
+          style={{ color: msg === "Saved!" ? "#4a9a6a" : "#d1675a", background: msg === "Saved!" ? "#4a9a6a18" : "#d1675a18", border: `1px solid ${msg === "Saved!" ? "#4a9a6a35" : "#d1675a35"}` }}>
+          {msg}
+        </div>
+      )}
 
-        {/* ── Text fields ── */}
+      <div className="flex flex-col gap-4 sm:gap-5">
         {TEXT_FIELDS.map(f => (
           <Field key={f.key} label={f.label}>
             <input
@@ -173,30 +173,22 @@ export default function AdminProfile() {
           </Field>
         ))}
 
-        {/* ── Array fields (one item per line) ── */}
         {ARRAY_FIELDS.map(f => (
           <Field key={f.key} label={f.label + " — one per line"}>
             <textarea
               rows={6}
               style={{ ...inputStyle, resize: "vertical", lineHeight: "1.7" }}
               value={arrayDraft[f.key] ?? ""}
-              onChange={e => {
-                // Store raw value — newlines preserved while typing
-                setArrayDraft(d => ({ ...d, [f.key]: e.target.value }));
-              }}
-              onKeyDown={e => {
-                // Prevent any parent form from intercepting Enter/Shift+Enter
-                e.stopPropagation();
-              }}
+              onChange={e => setArrayDraft(d => ({ ...d, [f.key]: e.target.value }))}
+              onKeyDown={e => e.stopPropagation()}
               placeholder={"Enter\nEach\nItem\nOn\nIts\nOwn\nLine"}
             />
             <p className="text-[10px] font-mono mt-1" style={{ color: "#2a4a60" }}>
-              Press Enter or Shift+Enter for a new line. Blank lines are ignored on save.
+              Press Enter for a new line. Blank lines are ignored on save.
             </p>
           </Field>
         ))}
 
-        {/* ── Bool fields ── */}
         {BOOL_FIELDS.map(f => (
           <Field key={f.key} label={f.label}>
             <label className="flex items-center gap-2 cursor-pointer">
@@ -212,7 +204,6 @@ export default function AdminProfile() {
             </label>
           </Field>
         ))}
-
       </div>
     </div>
   );
