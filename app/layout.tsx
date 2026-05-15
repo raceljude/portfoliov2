@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import "./globals.css";
 import { profile } from "@/config/personal";
+import "@/app/globals.css";
 
 export const metadata: Metadata = {
   title:       profile.siteTitle,

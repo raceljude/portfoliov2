@@ -5,6 +5,22 @@ import { useState } from "react";
 import { User, Briefcase, FolderOpen, Code2, LogOut, Home, Menu, X } from "lucide-react";
 import RJMMIcon from "@/components/RJMMIcon";
 
+// Admin uses the same dark-mode palette as the portfolio dark theme,
+// with the same bg colour so it feels like one continuous product.
+const A = {
+  bg:          "#0c1018",   // identical to portfolio dark bg
+  sidebar:     "#090d15",   // just a hair darker for the rail
+  card:        "#111827",   // same card token
+  border:      "#1e2a3a",   // same border token
+  textPri:     "#f0ece8",
+  textSec:     "#8aa8bc",
+  textMut:     "#4a6a80",
+  textDim:     "#2a4a60",
+  accent:      "#d1675a",
+  accentBlue:  "#398eb2",
+  accentAmber: "#ffbf6b",
+} as const;
+
 const navItems = [
   { href: "/admin",             label: "Dashboard",  icon: Home       },
   { href: "/admin/profile",     label: "Profile",    icon: User       },
@@ -28,13 +44,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const NavContent = () => (
     <>
       {/* Logo */}
-      <div className="flex items-center gap-2.5 p-5 pb-4 shrink-0" style={{ borderBottom: "1px solid #1e2a3a" }}>
+      <div
+        className="flex items-center gap-2.5 p-5 pb-4 shrink-0"
+        style={{ borderBottom: "1px solid " + A.border }}
+      >
         <RJMMIcon size={32} />
         <div>
-          <p className="text-xs font-bold" style={{ color: "#f0ece8", fontFamily: "var(--font-display)" }}>
+          <p className="text-xs font-bold" style={{ color: A.textPri, fontFamily: "var(--font-display)" }}>
             Portfolio
           </p>
-          <p className="text-[10px] font-mono" style={{ color: "#2a4a60" }}>Admin Panel</p>
+          <p className="text-[10px] font-mono" style={{ color: A.textDim }}>Admin Panel</p>
         </div>
       </div>
 
@@ -49,9 +68,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               onClick={() => { router.push(item.href); setMobileOpen(false); }}
               className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-mono text-left w-full focus:outline-none transition-all"
               style={{
-                background: active ? "#1e2a3a" : "transparent",
-                color:      active ? "#d1675a" : "#4a6a80",
-                borderLeft: active ? "2px solid #d1675a" : "2px solid transparent",
+                background: active ? A.card : "transparent",
+                color:      active ? A.accent : A.textMut,
+                borderLeft: active ? "2px solid " + A.accent : "2px solid transparent",
               }}
             >
               <Icon size={14} />
@@ -62,21 +81,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </nav>
 
       {/* Bottom */}
-      <div className="p-3 shrink-0" style={{ borderTop: "1px solid #1e2a3a" }}>
+      <div className="p-3 shrink-0" style={{ borderTop: "1px solid " + A.border }}>
         <a
           href="/"
           target="_blank"
           className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-mono w-full mb-1"
-          style={{ color: "#2a4a60" }}
+          style={{ color: A.textDim }}
         >
           <Home size={13} /> View site
         </a>
         <button
           onClick={logout}
           className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-mono w-full focus:outline-none transition-all"
-          style={{ color: "#4a6a80" }}
-          onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "#d1675a"}
-          onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "#4a6a80"}
+          style={{ color: A.textMut }}
+          onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = A.accent}
+          onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = A.textMut}
         >
           <LogOut size={13} /> Sign out
         </button>
@@ -85,24 +104,55 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   );
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#0c1018", color: "#f0ece8" }}>
+    <div
+      className="min-h-screen flex flex-col"
+      style={{
+        // Same layered orb-glow treatment as the portfolio ScrollBackground —
+        // deep navy top-left, deep red bottom-right, over the same base bg.
+        background: `
+          radial-gradient(ellipse 55% 45% at 5% 0%,   rgba(21,61,82,0.28)  0%, transparent 65%),
+          radial-gradient(ellipse 45% 35% at 95% 100%, rgba(150,49,46,0.18) 0%, transparent 60%),
+          ${A.bg}
+        `,
+        color: A.textPri,
+      }}
+    >
+      {/* Subtle grid overlay — mirrors ScrollBackground gridlines */}
+      <div
+        aria-hidden="true"
+        style={{
+          position:   "fixed",
+          inset:      0,
+          pointerEvents: "none",
+          zIndex:     0,
+          backgroundImage: "linear-gradient(rgba(57,142,178,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(57,142,178,0.04) 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
+          maskImage: "radial-gradient(ellipse 90% 90% at 50% 40%, black 20%, transparent 80%)",
+          WebkitMaskImage: "radial-gradient(ellipse 90% 90% at 50% 40%, black 20%, transparent 80%)",
+        }}
+      />
 
       {/* Mobile top bar */}
       <header
-        className="flex sm:hidden items-center justify-between px-4 py-3 shrink-0"
-        style={{ background: "#0a0f17", borderBottom: "1px solid #1e2a3a" }}
+        className="flex sm:hidden items-center justify-between px-4 py-3 shrink-0 relative z-10"
+        style={{
+          background:   A.sidebar + "f0",
+          borderBottom: "1px solid " + A.border,
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+        }}
       >
         <div className="flex items-center gap-2.5">
           <RJMMIcon size={28} />
           <div>
-            <p className="text-xs font-bold leading-none" style={{ color: "#f0ece8", fontFamily: "var(--font-display)" }}>Portfolio</p>
-            <p className="text-[10px] font-mono mt-0.5" style={{ color: "#2a4a60" }}>Admin Panel</p>
+            <p className="text-xs font-bold leading-none" style={{ color: A.textPri, fontFamily: "var(--font-display)" }}>Portfolio</p>
+            <p className="text-[10px] font-mono mt-0.5" style={{ color: A.textDim }}>Admin Panel</p>
           </div>
         </div>
         <button
           onClick={() => setMobileOpen(v => !v)}
           className="p-2 rounded-xl focus:outline-none"
-          style={{ background: "#111827", border: "1px solid #1e2a3a", color: "#4a6a80" }}
+          style={{ background: A.card, border: "1px solid " + A.border, color: A.textMut }}
         >
           {mobileOpen ? <X size={16} /> : <Menu size={16} />}
         </button>
@@ -112,7 +162,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {mobileOpen && (
         <div
           className="fixed inset-0 z-40 sm:hidden"
-          style={{ background: "rgba(0,0,0,0.6)" }}
+          style={{ background: "rgba(0,0,0,0.65)" }}
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -121,19 +171,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside
         className="fixed top-0 left-0 bottom-0 z-50 flex flex-col w-56 sm:hidden transition-transform duration-300"
         style={{
-          background: "#0a0f17",
-          borderRight: "1px solid #1e2a3a",
-          transform: mobileOpen ? "translateX(0)" : "translateX(-100%)",
+          background:  A.sidebar,
+          borderRight: "1px solid " + A.border,
+          transform:   mobileOpen ? "translateX(0)" : "translateX(-100%)",
         }}
       >
         <NavContent />
       </aside>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative z-10">
         {/* Desktop sidebar */}
         <aside
           className="hidden sm:flex flex-col w-56 shrink-0"
-          style={{ background: "#0a0f17", borderRight: "1px solid #1e2a3a" }}
+          style={{
+            background:   A.sidebar + "d8",
+            borderRight:  "1px solid " + A.border,
+            backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
+          }}
         >
           <NavContent />
         </aside>

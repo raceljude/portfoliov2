@@ -23,10 +23,18 @@ body {
 
 ::selection { background: #d1675a; color: #f0ece8; }
 
+/* ── Dark mode scrollbar ── */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: #0c1018; }
 ::-webkit-scrollbar-thumb { background: #1e2a3a; border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: #d1675a; }
+
+/* ── Light mode scrollbar — warm parchment family ── */
+@media (prefers-color-scheme: light) {
+  ::-webkit-scrollbar-track { background: #f7ebe5; }
+  ::-webkit-scrollbar-thumb { background: #ddd0c8; }
+  ::-webkit-scrollbar-thumb:hover { background: #d1675a; }
+}
 
 .grain {
   position: fixed; inset: 0; z-index: 100; pointer-events: none; opacity: 0.03;
