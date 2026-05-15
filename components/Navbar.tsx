@@ -1,5 +1,5 @@
 "use client";
-import { P } from "@/lib/theme";
+import { P, tokens } from "@/lib/theme";
 
 import { useEffect, useState, useRef } from "react";
 import { Sun, Moon } from "lucide-react";
@@ -33,6 +33,7 @@ export default function Navbar({ theme, onThemeToggle, onHireMe, isDark, profile
   const containerRef = useRef<HTMLDivElement>(null);
   const clickLockRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lockedRef    = useRef(false);
+  const t            = tokens(isDark);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -81,10 +82,20 @@ export default function Navbar({ theme, onThemeToggle, onHireMe, isDark, profile
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const navBg     = scrolled ? isDark ? "rgba(12,16,24,0.92)" : "rgba(240,244,248,0.92)" : "transparent";
-  const navBorder = scrolled ? isDark ? "1px solid rgba(30,42,58,0.9)"  : "1px solid rgba(196,210,222,0.6)" : "1px solid transparent";
-  const linkColor = isDark ? "#4a6a80" : "#5a8aaa";
-  const linkHover = isDark ? "#c8dce8" : "#0e1e2a";
+  // Warm parchment for light, dark navy for dark — no cold greys
+  const navBg     = scrolled
+    ? isDark
+      ? "rgba(12,16,24,0.92)"
+      : "rgba(247,235,229,0.92)"   // warm parchment
+    : "transparent";
+  const navBorder = scrolled
+    ? isDark
+      ? "1px solid rgba(30,42,58,0.9)"
+      : "1px solid rgba(221,208,200,0.8)"  // warm taupe border
+    : "1px solid transparent";
+
+  const linkColor = isDark ? "#4a6a80" : "#8a7068";   // warm brown for light
+  const linkHover = isDark ? "#c8dce8" : "#333333";
 
   return (
     <>
@@ -106,7 +117,7 @@ export default function Navbar({ theme, onThemeToggle, onHireMe, isDark, profile
               </div>
               <div className="hidden sm:flex flex-col leading-none">
                 <span className="text-[11px] font-extrabold tracking-widest uppercase"
-                  style={{ fontFamily: "var(--font-display)", color: isDark ? "#f0ece8" : "#0e1e2a" }}>
+                  style={{ fontFamily: "var(--font-display)", color: t.textPri }}>
                   {profileFirstName}
                 </span>
                 <span className="text-[9px] font-mono tracking-widest uppercase mt-0.5" style={{ color: linkColor }}>
@@ -139,10 +150,10 @@ export default function Navbar({ theme, onThemeToggle, onHireMe, isDark, profile
 
               {/* Theme toggle */}
               <button onClick={onThemeToggle} className="ml-2 p-2 rounded-lg border focus:outline-none"
-                style={{ borderColor: isDark ? "#1e2a3a" : "#c4d2de", color: linkColor, transition: "all 0.2s", background: "transparent" }}
+                style={{ borderColor: t.border, color: linkColor, transition: "all 0.2s", background: "transparent" }}
                 aria-label="Toggle theme"
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = P.blue; (e.currentTarget as HTMLElement).style.color = P.blue; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = isDark ? "#1e2a3a" : "#c4d2de"; (e.currentTarget as HTMLElement).style.color = linkColor; }}>
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = t.border; (e.currentTarget as HTMLElement).style.color = linkColor; }}>
                 {isDark ? <Sun size={13}/> : <Moon size={13}/>}
               </button>
 
@@ -158,11 +169,11 @@ export default function Navbar({ theme, onThemeToggle, onHireMe, isDark, profile
             {/* Mobile */}
             <div className="sm:hidden flex items-center gap-2">
               <button onClick={onThemeToggle} className="p-2 rounded-lg border focus:outline-none"
-                style={{ borderColor: isDark ? "#1e2a3a" : "#c4d2de", color: linkColor }}>
+                style={{ borderColor: t.border, color: linkColor }}>
                 {isDark ? <Sun size={13}/> : <Moon size={13}/>}
               </button>
               <button onClick={() => setMenuOpen(v => !v)} className="p-2 rounded-lg border focus:outline-none"
-                style={{ borderColor: isDark ? "#1e2a3a" : "#c4d2de", color: linkColor }} aria-label="Toggle menu">
+                style={{ borderColor: t.border, color: linkColor }} aria-label="Toggle menu">
                 <div className="flex flex-col gap-1 w-4">
                   {[0, 1, 2].map(i => (
                     <span key={i} className="h-px bg-current block" style={{
@@ -183,7 +194,10 @@ export default function Navbar({ theme, onThemeToggle, onHireMe, isDark, profile
           transition: "max-height 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease",
         }}>
           <div className="border-t px-4 py-3 flex flex-col gap-1 backdrop-blur-xl"
-            style={{ borderColor: isDark ? "#1e2a3a" : "#c4d2de", background: isDark ? "rgba(10,14,22,0.98)" : "rgba(240,244,248,0.98)" }}>
+            style={{
+              borderColor: t.border,
+              background: isDark ? "rgba(10,14,22,0.98)" : "rgba(247,235,229,0.98)",
+            }}>
             {navLinks.map((link, i) => (
               <button key={link.href} onClick={() => handleNavClick(link.href, i)}
                 className="w-full text-left px-3 py-2.5 text-xs font-mono tracking-wider uppercase rounded-lg focus:outline-none"

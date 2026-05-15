@@ -125,8 +125,26 @@ export default function ScrollBackground({ theme }: Props) {
   }, []);
 
   const t = sectionThemes[themeIndex];
-  const particleColor = isDark ? "rgba(255,191,107,0.07)" : "rgba(150,49,46,0.06)";
-  const vignetteColor = isDark ? "#0c1018" : "#f0f4f8";
+
+  // Light mode: very faint warm-tinted particles, warm parchment vignette
+  const particleColor = isDark
+    ? "rgba(255,191,107,0.07)"
+    : "rgba(150,49,46,0.05)";
+
+  // KEY FIX: vignette must match the actual page bg color
+  const vignetteColor = isDark ? "#0c1018" : "#f7ebe5";
+
+  // Light mode: reduce orb opacity significantly so they don't overwhelm
+  const orbOpacityMul = isDark ? 1 : 0.35;
+
+  // Light mode: grid lines in warm taupe tones
+  const gridColor = isDark
+    ? "rgba(57,142,178,0.06)"
+    : "rgba(150,80,60,0.04)";
+
+  const dotColor = isDark
+    ? "rgba(255,191,107,0.10)"
+    : "rgba(150,80,60,0.05)";
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden"
@@ -137,29 +155,26 @@ export default function ScrollBackground({ theme }: Props) {
           position: "absolute", left: orb.x, top: orb.y,
           width: orb.size, height: orb.size, borderRadius: "50%",
           background: orb.color,
-          opacity: isDark ? orb.opacity : orb.opacity * 0.5,
+          opacity: orb.opacity * orbOpacityMul,
           filter: `blur(${orb.size * 0.44}px)`,
           transform: "translate(-50%, -50%)",
           animation: `orbFloat ${6 + i * 2.5}s ease-in-out infinite alternate`,
         }}/>
       ))}
 
-      {/* Gridlines — soft horizontal + vertical lines */}
+      {/* Gridlines */}
       <div style={{
         position: "absolute", inset: 0,
-        backgroundImage: isDark
-          ? "linear-gradient(rgba(57,142,178,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(57,142,178,0.06) 1px, transparent 1px)"
-          : "linear-gradient(rgba(21,61,82,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(21,61,82,0.05) 1px, transparent 1px)",
+        backgroundImage: `linear-gradient(${gridColor} 1px, transparent 1px), linear-gradient(90deg, ${gridColor} 1px, transparent 1px)`,
         backgroundSize: "60px 60px",
         maskImage: "radial-gradient(ellipse 90% 90% at 50% 40%, black 20%, transparent 80%)",
         WebkitMaskImage: "radial-gradient(ellipse 90% 90% at 50% 40%, black 20%, transparent 80%)",
       }}/>
-      {/* Subtle dot at each intersection */}
+
+      {/* Dots at intersections */}
       <div style={{
         position: "absolute", inset: 0,
-        backgroundImage: isDark
-          ? "radial-gradient(circle, rgba(255,191,107,0.10) 1px, transparent 1px)"
-          : "radial-gradient(circle, rgba(150,49,46,0.07) 1px, transparent 1px)",
+        backgroundImage: `radial-gradient(circle, ${dotColor} 1px, transparent 1px)`,
         backgroundSize: "60px 60px",
         maskImage: "radial-gradient(ellipse 80% 80% at 50% 40%, black 10%, transparent 70%)",
         WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 40%, black 10%, transparent 70%)",
@@ -177,6 +192,7 @@ export default function ScrollBackground({ theme }: Props) {
         }}>{p.text}</div>
       ))}
 
+      {/* Vignette — must match page bg exactly */}
       <div style={{
         position: "absolute", inset: 0,
         background: `radial-gradient(ellipse 100% 100% at 50% 50%, transparent 30%, ${vignetteColor} 90%)`,

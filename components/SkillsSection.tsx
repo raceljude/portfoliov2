@@ -28,18 +28,13 @@ export default function SkillsSection({ isDark, skillGroups }: Props) {
   return (
     <section id="skills" className="mt-14 scroll-mt-20">
       {/* Header */}
-      <div
-        className="flex items-center justify-between mb-6"
-        style={{ animation: "fadeUp 0.6s ease 0.1s forwards", opacity: 0 }}
-      >
+      <div className="flex items-center justify-between mb-6"
+        style={{ animation: "fadeUp 0.6s ease 0.1s forwards", opacity: 0 }}>
         <div>
           <p className="text-xs font-mono uppercase tracking-widest mb-1" style={{ color: t.textMut }}>
             Tech Stack
           </p>
-          <h2
-            className="text-xl font-bold"
-            style={{ fontFamily: "var(--font-display)", color: t.textPri }}
-          >
+          <h2 className="text-xl font-bold" style={{ fontFamily: "var(--font-display)", color: t.textPri }}>
             Skills
           </h2>
         </div>
@@ -49,10 +44,8 @@ export default function SkillsSection({ isDark, skillGroups }: Props) {
       </div>
 
       {/* Tab bar */}
-      <div
-        className="flex gap-2 flex-wrap mb-6"
-        style={{ animation: "fadeUp 0.6s ease 0.15s forwards", opacity: 0 }}
-      >
+      <div className="flex gap-2 flex-wrap mb-6"
+        style={{ animation: "fadeUp 0.6s ease 0.15s forwards", opacity: 0 }}>
         {skillGroups.map(g => {
           const Icon = IconMap[g.icon];
           const isActive = activeTab === g.id;
@@ -101,18 +94,14 @@ export default function SkillsSection({ isDark, skillGroups }: Props) {
         }}
       >
         {/* Panel top accent */}
-        <div
-          className="h-[3px] w-full"
-          style={{ background: "linear-gradient(90deg, " + group.color + ", transparent 70%)" }}
-        />
+        <div className="h-[3px] w-full"
+          style={{ background: "linear-gradient(90deg, " + group.color + ", transparent 70%)" }}/>
 
         <div className="p-6">
           {/* Group header */}
           <div className="flex items-start gap-4 mb-6 pb-5" style={{ borderBottom: "1px solid " + t.border }}>
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-              style={{ background: group.color + "18", border: "1px solid " + group.color + "35" }}
-            >
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: group.color + "18", border: "1px solid " + group.color + "35" }}>
               {(() => { const I = IconMap[group.icon]; return I ? <I size={18} style={{ color: group.color }} /> : null; })()}
             </div>
             <div>
@@ -132,7 +121,8 @@ export default function SkillsSection({ isDark, skillGroups }: Props) {
                 key={skill.label}
                 className="rounded-xl p-4"
                 style={{
-                  background: isDark ? "#0e1e2c" : "#dce8f0",
+                  // Use pillBg instead of hardcoded dark/light values
+                  background: t.pillBg,
                   border: "1px solid " + t.border,
                   animation: "fadeUp 0.4s ease forwards",
                   animationDelay: i * 50 + "ms",
@@ -149,15 +139,12 @@ export default function SkillsSection({ isDark, skillGroups }: Props) {
                   </span>
                   <div className="flex gap-1">
                     {[1, 2, 3, 4, 5].map(dot => (
-                      <div
-                        key={dot}
-                        className="w-2 h-2 rounded-full"
+                      <div key={dot} className="w-2 h-2 rounded-full"
                         style={{
                           background: dot <= skill.level ? group.color : t.border,
                           opacity: dot <= skill.level ? 1 : 0.4,
                           transition: "background 0.2s",
-                        }}
-                      />
+                        }}/>
                     ))}
                   </div>
                 </div>
@@ -169,15 +156,13 @@ export default function SkillsSection({ isDark, skillGroups }: Props) {
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {skill.where.map(place => (
-                      <span
-                        key={place}
+                      <span key={place}
                         className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded-md"
                         style={{
                           background: group.color + "12",
                           border: "1px solid " + group.color + "28",
-                          color: isDark ? group.color : group.color,
-                        }}
-                      >
+                          color: group.color,
+                        }}>
                         <CheckCircle2 size={8} />
                         {place}
                       </span>
@@ -190,11 +175,9 @@ export default function SkillsSection({ isDark, skillGroups }: Props) {
         </div>
       </div>
 
-      {/* Summary bar — all categories at a glance */}
-      <div
-        className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3"
-        style={{ animation: "fadeUp 0.6s ease 0.4s forwards", opacity: 0 }}
-      >
+      {/* Summary bar */}
+      <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3"
+        style={{ animation: "fadeUp 0.6s ease 0.4s forwards", opacity: 0 }}>
         {skillGroups.map(g => {
           const Icon = IconMap[g.icon];
           const avgLevel = Math.round(g.skills.reduce((a, s) => a + s.level, 0) / g.skills.length);
@@ -221,12 +204,9 @@ export default function SkillsSection({ isDark, skillGroups }: Props) {
                 {g.skills.length}
               </p>
               <p className="text-[10px] font-mono" style={{ color: t.textMut }}>skills</p>
-              {/* Mini proficiency bar */}
               <div className="mt-2 h-1 rounded-full overflow-hidden" style={{ background: t.border }}>
-                <div
-                  className="h-full rounded-full"
-                  style={{ width: (avgLevel / 5 * 100) + "%", background: g.color, transition: "width 0.4s ease" }}
-                />
+                <div className="h-full rounded-full"
+                  style={{ width: (avgLevel / 5 * 100) + "%", background: g.color, transition: "width 0.4s ease" }}/>
               </div>
             </button>
           );
