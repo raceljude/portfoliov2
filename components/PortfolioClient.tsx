@@ -12,6 +12,7 @@ import Navbar                  from "@/components/Navbar";
 import HireMeModal             from "@/components/HireMeModal";
 import SkillsSection           from "@/components/SkillsSection";
 import TypingTitle             from "@/components/TypingTitle";
+import LiveClock               from "@/components/Liveclock";
 import type { PortfolioData }  from "@/lib/data";
 import { P, tokens }           from "@/lib/theme";
 
@@ -78,6 +79,11 @@ export default function PortfolioClient({ data }: Props) {
                 <p className="mt-3 max-w-md text-sm leading-relaxed" style={{ color: t.textSec }}>
                   {profile.tagline}
                 </p>
+
+                {/* ── LIVE CLOCK ── */}
+                <div className="mt-4">
+                  <LiveClock isDark={isDark} />
+                </div>
               </div>
 
               {/* Contact cluster */}
