@@ -1,0 +1,5 @@
+# Allows npm to resolve peer dependency conflicts gracefully.
+# Needed because some packages (e.g. @supabase/ssr) haven't yet
+# updated their peer dep declarations to include React 19 explicitly,
+# even though they work correctly with it.
+legacy-peer-deps=true
