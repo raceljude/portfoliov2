@@ -3,16 +3,21 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { getAdminSession } from "@/lib/auth";
 import { revalidatePortfolio } from "@/lib/revalidate";
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+// Next.js 15: params is now a Promise — must be awaited
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   if (!(await getAdminSession()))
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const { id } = await params;
   const body = await req.json();
   const db = supabaseAdmin();
   const { data, error } = await db
     .from("skills")
     .update(body)
-    .eq("id", params.id)
+    .eq("id", id)
     .select()
     .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -20,12 +25,16 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   return NextResponse.json(data);
 }
 
-export async function DELETE(_: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  _: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   if (!(await getAdminSession()))
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const { id } = await params;
   const db = supabaseAdmin();
-  const { error } = await db.from("skills").delete().eq("id", params.id);
+  const { error } = await db.from("skills").delete().eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   revalidatePortfolio();
   return NextResponse.json({ ok: true });

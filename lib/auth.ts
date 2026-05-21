@@ -23,8 +23,9 @@ export async function verifyAdminToken(token: string) {
   }
 }
 
+// Next.js 15: cookies() is now async — must be awaited
 export async function getAdminSession(): Promise<boolean> {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE)?.value;
   if (!token) return false;
   return verifyAdminToken(token);
