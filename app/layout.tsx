@@ -3,7 +3,7 @@ import "./globals.css";
 import { profile } from "@/config/personal";
 
 // ─── Site URL (set NEXT_PUBLIC_SITE_URL in Vercel env vars) ──────────────────
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://raceljudemarahay.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://rjmm.vercel.app";
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 export const metadata: Metadata = {
