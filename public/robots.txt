@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Block admin routes from indexing
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://rjmm.vercel.app/sitemap.xml

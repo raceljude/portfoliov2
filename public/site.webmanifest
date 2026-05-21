@@ -1,0 +1,17 @@
+{
+  "name": "Racel Jude Marahay — Software Developer",
+  "short_name": "RJ Marahay",
+  "description": "Portfolio of Racel Jude Marahay, Junior Software Developer from Metro Manila, Philippines.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c1018",
+  "theme_color": "#0c1018",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
